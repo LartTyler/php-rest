@@ -1,0 +1,33 @@
+{
+	"name": "dbstudios/php-rest",
+	"type": "library",
+	"license": "GPL-3.0",
+	"authors": [
+		{
+			"name": "Tyler Lartonoix",
+			"email": "tyler@lartonoix.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"DaybreakStudios\\Rest\\": "./src"
+		}
+	},
+	"require": {
+		"php": ">=8.2"
+	},
+	"require-dev": {
+		"symfony/framework-bundle": "^6.3",
+		"symfony/serializer": "^6.3",
+		"symfony/event-dispatcher-contracts": "^3.3",
+		"dbstudios/doctrine-entities": "^1.0",
+		"doctrine/orm": "^2.16",
+		"symfony/validator": "^6.3",
+		"dbstudios/doctrine-query-document": "^1.8",
+		"phpunit/phpunit": "^10.3",
+		"symfony/property-access": "^6.3"
+	},
+	"scripts": {
+		"test": "phpunit ./tests"
+	}
+}
