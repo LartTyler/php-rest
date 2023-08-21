@@ -1,6 +1,14 @@
 <?php
+	use DaybreakStudios\Rest\Controller\AbstractApiController;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
-	use Symfony\Component\Validator\Constraints\NotNull;
+	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\Validator\Constraints as Assert;
+
+	class UserController extends AbstractApiController {
+		public function read(User $user): Response {
+			return $this->respond($user);
+		}
+	}
 
 	class User implements EntityInterface {
 		private static int $nextId = 1;
@@ -34,6 +42,12 @@
 		}
 	}
 
-	class UserPayload {
+	readonly class UserPayload {
 		private ?string $favoriteColor;
+	}
+
+	readonly class UserCreatePayload extends UserPayload {
+		#[Assert\NotNull]
+		#[Assert\Range(min: 1)]
+		private int $id;
 	}

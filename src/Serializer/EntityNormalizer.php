@@ -48,7 +48,7 @@
 			object|string $classOrObject,
 			string $attribute,
 			string $format = null,
-			array $context = []
+			array $context = [],
 		): bool {
 			return $this->isAllowedByProjection($attribute, $context)
 				&& parent::isAllowedAttribute(
@@ -78,7 +78,7 @@
 			object $object,
 			string $attribute,
 			string $format = null,
-			array $context = []
+			array $context = [],
 		) {
 			return $this->objectNormalizer->getAttributeValue($object, $attribute, $format, $context);
 		}
@@ -88,7 +88,7 @@
 			string $attribute,
 			mixed $value,
 			string $format = null,
-			array $context = []
+			array $context = [],
 		): void {
 			$this->objectNormalizer->setAttributeValue($object, $attribute, $value, $format, $context);
 		}
