@@ -3,6 +3,7 @@
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
 	use DaybreakStudios\DoctrineQueryDocument\QueryManagerInterface;
+	use DaybreakStudios\Rest\Controller\Exceptions\NullPayloadException;
 	use DaybreakStudios\Rest\Error\ApiErrorInterface;
 	use DaybreakStudios\Rest\Error\AsApiErrorInterface;
 	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
@@ -23,6 +24,7 @@
 	use Psr\EventDispatcher\EventDispatcherInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 
 	abstract class AbstractApiController extends AbstractController {
 		protected function __construct(
@@ -46,7 +48,7 @@
 			$this->eventDispatcher->dispatch($event);
 
 			$data = $event->getInstance();
-			assert($data !== null); // TODO Need to properly handle `null` values here /tyler
+			assert($this->checkPayloadInstanceNotNull($data));
 
 			try {
 				$entity = $transformer->create($data);
@@ -66,18 +68,20 @@
 				if ($event->getShouldFlush())
 					$this->entityManager->flush();
 			}
+
+			return $this->respond($entity);
 		}
 
 		protected function doUpdate(
 			string $dtoClass,
 			EntityInterface $entity,
-			TransformerInterface $transformer
+			TransformerInterface $transformer,
 		): Response {
 			$event = new PayloadInitEvent($dtoClass);
 			$this->eventDispatcher->dispatch($event);
 
 			$data = $event->getInstance();
-			assert($data !== null); // TODO Need to properly handle `null` values here /tyler
+			assert($this->checkPayloadInstanceNotNull($data));
 
 			try {
 				$transformer->update($data, $entity);
@@ -122,13 +126,16 @@
 			?callable $configurator = null,
 			string $alias = 'entity',
 		): Response {
+			$query = $this->entityManager->getRepository($entityClass)->createQueryBuilder($alias);
+			$builder = new ListResponseBuilder($query);
+
 			$event = new QueryInitEvent();
 			$this->eventDispatcher->dispatch($event);
 
 			if ($error = $event->getError())
 				return $this->respond($error);
 
-			$queryDocument = $event->getQuery();
+			$builder->setQueryDocument($event->getQuery());
 
 			$event = new QueryLimitInitEvent();
 			$this->eventDispatcher->dispatch($event);
@@ -136,7 +143,7 @@
 			if ($error = $event->getError())
 				return $this->respond($error);
 
-			$limit = $event->getLimit();
+			$builder->setLimit($event->getLimit());
 
 			$event = new QueryOffsetInitEvent();
 			$this->eventDispatcher->dispatch($event);
@@ -144,12 +151,7 @@
 			if ($error = $event->getError())
 				return $this->respond($error);
 
-			$offset = $event->getOffset();
-
-			$query = $this->entityManager->getRepository($entityClass)
-				->createQueryBuilder($alias);
-
-			$builder = new ListResponseBuilder($query, $queryDocument, $limit, $offset);
+			$builder->setOffset($event->getOffset());
 
 			if ($configurator !== null)
 				$configurator($builder);
@@ -193,7 +195,19 @@
 				$data,
 				context: (new EntityNormalizerContextBuilder())
 					->withProjection($projection)
+					->withContext($this->createSerializerContext())
 					->toArray(),
 			);
+		}
+
+		protected function createSerializerContext(): ContextBuilderInterface|array {
+			return [];
+		}
+
+		private function checkPayloadInstanceNotNull(?object $data): bool {
+			if ($data === null)
+				throw new NullPayloadException();
+
+			return true;
 		}
 	}

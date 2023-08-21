@@ -4,11 +4,12 @@
 	use Doctrine\ORM\QueryBuilder;
 
 	class ListResponseBuilder {
+		protected ?array $queryDocument = null;
+		protected ?int $limit = null;
+		protected ?int $offset = null;
+
 		public function __construct(
 			protected QueryBuilder $query,
-			protected ?array $queryDocument = null,
-			protected ?int $limit = null,
-			protected ?int $offset = null,
 		) {}
 
 		/**

@@ -4,6 +4,7 @@
 	use DaybreakStudios\DoctrineQueryDocument\Projection\PrefixedProjection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\ProjectionInterface;
+	use DaybreakStudios\Rest\Serializer\EntityNormalizerContextBuilder as Context;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 	use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;
@@ -13,8 +14,6 @@
 	use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 	class EntityNormalizer extends AbstractObjectNormalizer {
-		public const CONTEXT_PROJECTION = 'dbstudios.projection';
-
 		public function __construct(
 			protected ObjectNormalizer $objectNormalizer,
 			ClassMetadataFactoryInterface $classMetadataFactory = null,
@@ -61,13 +60,28 @@
 
 		protected function isAllowedByProjection(string $attribute, array $context): bool {
 			/** @var ProjectionInterface|null $projection */
-			$projection = $context[static::CONTEXT_PROJECTION] ?? null;
+			$projection = $context[Context::PROJECTION] ?? null;
 
 			// If we don't have a projection, everything is allowed
 			if (!$projection)
 				return true;
 
-			return $projection->isAllowed($attribute);
+			if ($this->isStrictAttribute($attribute, $context))
+				return $projection->isAllowedExplicitly($attribute);
+			else
+				return $projection->isAllowed($attribute);
+		}
+
+		protected function isStrictAttribute(string $attribute, array $context): bool {
+			$strictAttributes = $context[Context::STRICT] ?? null;
+
+			if (isset($strictAttributes[$attribute]))
+				return true;
+
+			if (is_array($strictAttributes))
+				return in_array($attribute, $strictAttributes, true);
+
+			return false;
 		}
 
 		protected function extractAttributes(object $object, string $format = null, array $context = []): array {
@@ -100,8 +114,13 @@
 				$format,
 			);
 
-			$prevProjection = $context[static::CONTEXT_PROJECTION] ?? Projection::fromFields([]);
-			$context[static::CONTEXT_PROJECTION] = new PrefixedProjection($prevProjection, $attribute);
+			$prevProjection = $context[Context::PROJECTION] ?? Projection::fromFields([]);
+			$context[Context::PROJECTION] = new PrefixedProjection($prevProjection, $attribute);
+
+			if (isset($context[Context::STRICT][$attribute]))
+				$context[Context::STRICT] = $context[Context::STRICT][$attribute];
+			else
+				unset($context[Context::STRICT]);
 
 			return $context;
 		}

@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners;
+	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
 
 	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
 	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
@@ -8,7 +8,7 @@
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\Serializer\SerializerInterface;
 
-	#[AsEventListener(priority: -100)]
+	#[AsEventListener]
 	class PayloadInitListener {
 		public function __construct(
 			protected SerializerInterface $serializer,
@@ -17,12 +17,12 @@
 			protected string $defaultFormat = 'json',
 		) {}
 
-		public function onPayloadInit(PayloadInitEvent $event) {
+		public function __invoke(PayloadInitEvent $event): void {
 			$request = $this->requestStack->getCurrentRequest();
 			$instance = $this->serializer->deserialize(
 				$request->getContent(),
 				$event->getDtoClass(),
-				$request->getContentTypeFormat() ?? $this->getDefaultFormat(),
+				$this->getDefaultFormat(),
 			);
 
 			$event->setInstance($instance);

@@ -10,12 +10,13 @@
 		use ContextBuilderTrait;
 
 		public const PROJECTION = 'dbstudios.projection';
+		public const STRICT = 'dbstudios.strict';
 
 		public function withProjection(ProjectionInterface $projection): static {
 			return $this->with(static::PROJECTION, $projection);
 		}
 
-		public function withPrefixedProjection(string $prefix, ProjectionInterface $parentProjection): static {
-			return $this->with(static::PROJECTION, new PrefixedProjection($parentProjection, $prefix));
+		public function withStrict(array $strictAttributes): static {
+			return $this->with(static::STRICT, $strictAttributes);
 		}
 	}

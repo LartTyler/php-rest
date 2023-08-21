@@ -19,7 +19,7 @@
 		 * If `$data` is any other value, it will be passed to the configured `symfony/serializer` instanced before
 		 * being set as the body content.
 		 *
-		 * Also see {@see ResponseBuilderInterface::CONTEXT_SERIALIZER_FORMAT} for information on forcing serialzation
+		 * Also see {@see ResponseBuilderInterface::CONTEXT_SERIALIZER_FORMAT} for information on forcing serialization
 		 * formats.
 		 *
 		 * @param mixed    $data    The data to send

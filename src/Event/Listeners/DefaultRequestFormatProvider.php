@@ -12,7 +12,7 @@
 			protected ?string $defaultFormat = null,
 		) {}
 
-		public function onDefaultRequestFormat(DefaultRequestFormatEvent $event) {
+		public function __invoke(DefaultRequestFormatEvent $event): void {
 			$format = $event->getDefaultFormat() ?? $this->defaultFormat;
 			$format = $this->requestStack->getCurrentRequest()->getPreferredFormat($format);
 
