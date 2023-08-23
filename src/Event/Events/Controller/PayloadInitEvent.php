@@ -1,6 +1,7 @@
 <?php
 	namespace DaybreakStudios\Rest\Event\Events\Controller;
 
+	use DaybreakStudios\Rest\Error\ApiErrorInterface;
 	use Symfony\Contracts\EventDispatcher\Event;
 
 	/**
@@ -8,6 +9,7 @@
 	 */
 	class PayloadInitEvent extends Event {
 		private ?object $instance = null;
+		private ?ApiErrorInterface $error = null;
 
 		/**
 		 * @param class-string<T> $dtoClass
@@ -47,6 +49,15 @@
 		 */
 		public function setDtoClass(string $dtoClass): static {
 			$this->dtoClass = $dtoClass;
+			return $this;
+		}
+
+		public function getError(): ?ApiErrorInterface {
+			return $this->error;
+		}
+
+		public function setError(?ApiErrorInterface $error): static {
+			$this->error = $error;
 			return $this;
 		}
 	}

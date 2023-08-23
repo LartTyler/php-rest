@@ -6,7 +6,7 @@
 	use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 	use Symfony\Component\Serializer\Context\ContextBuilderTrait;
 
-	class EntityNormalizerContextBuilder implements ContextBuilderInterface {
+	class ObjectNormalizerContextBuilder implements ContextBuilderInterface {
 		use ContextBuilderTrait;
 
 		public const PROJECTION = 'dbstudios.projection';

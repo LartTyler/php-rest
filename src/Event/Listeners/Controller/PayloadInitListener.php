@@ -19,11 +19,22 @@
 
 		public function __invoke(PayloadInitEvent $event): void {
 			$request = $this->requestStack->getCurrentRequest();
-			$instance = $this->serializer->deserialize(
-				$request->getContent(),
-				$event->getDtoClass(),
-				$this->getDefaultFormat(),
-			);
+
+			try {
+				$instance = $this->serializer->deserialize(
+					$request->getContent(),
+					$event->getDtoClass(),
+					$this->getDefaultFormat(),
+				);
+			} catch (\TypeError) {
+				// TODO Handle \TypeError during deserialization /tyler
+
+				// A \TypeError here almost certainly means that the deserializer couldn't set the value of one of the
+				// properties in the DTO class we're deserializing into. We'll need to convert it to a
+				// ConstraintViolationError... somehow...
+
+				return;
+			}
 
 			$event->setInstance($instance);
 		}

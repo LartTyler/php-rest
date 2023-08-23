@@ -23,7 +23,7 @@
 		"dbstudios/doctrine-entities": "^1.0",
 		"doctrine/orm": "^2.16",
 		"symfony/validator": "^6.3",
-		"dbstudios/doctrine-query-document": "^1.8",
+		"dbstudios/doctrine-query-document": "@dev",
 		"phpunit/phpunit": "^10.3",
 		"symfony/property-access": "^6.3"
 	},

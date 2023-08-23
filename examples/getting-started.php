@@ -1,63 +1,57 @@
 <?php
+
 	use DaybreakStudios\Rest\Controller\AbstractApiController;
-	use DaybreakStudios\Rest\Serializer\EntityNormalizerContextBuilder;
+	use DaybreakStudios\Rest\Payload\Intent;
+	use DaybreakStudios\Rest\Payload\PayloadTrait;
+	use DaybreakStudios\Rest\Transformer\AbstractTransformer;
+	use DaybreakStudios\Rest\Transformer\Traits\CloneNotSupportedTrait;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Symfony\Component\HttpFoundation\Response;
-	use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 	use Symfony\Component\Validator\Constraints as Assert;
+
+	// Load common code for examples only; these would not normally be required directly.
+	require_once './_common.php';
 
 	class UserController extends AbstractApiController {
 		public function read(User $user): Response {
 			return $this->respond($user);
 		}
-
-		protected function createSerializerContext(): ContextBuilderInterface|array {
-			return (new EntityNormalizerContextBuilder())
-				->withStrict([
-					'complexField',
-				]);
-		}
 	}
 
-	class User implements EntityInterface {
-		private static int $nextId = 1;
+	class UserPayload {
+		use PayloadTrait;
 
-		private readonly int $id;
-		private ?string $favoriteColor = null;
-		private int $complexField = 42;
-
-		public function __construct(string $name) {
-			$this->id = static::$nextId++;
-		}
-
-		public function getId(): int {
-			return $this->id;
-		}
-
-		/**
-		 * @return string|null
-		 */
-		public function getFavoriteColor(): ?string {
-			return $this->favoriteColor;
-		}
-
-		/**
-		 * @param string|null $favoriteColor
-		 *
-		 * @return static
-		 */
-		public function setFavoriteColor(?string $favoriteColor): static {
-			$this->favoriteColor = $favoriteColor;
-			return $this;
-		}
-	}
-
-	readonly class UserPayload {
-		private ?string $favoriteColor;
-	}
-
-	readonly class UserCreatePayload extends UserPayload {
-		#[Assert\NotNull]
+		#[Assert\NotNull(groups: [Intent::Create])]
 		#[Assert\Range(min: 1)]
-		private int $id;
+		public ?int $id;
+
+		#[Assert\NotBlank(groups: ['create'])]
+		public ?string $username;
+
+		public ?string $favoriteColor;
+	}
+
+	class UserTransformer extends AbstractTransformer {
+		use CloneNotSupportedTrait;
+
+		protected function doCreate(object $data): EntityInterface {
+			assert($data instanceof UserPayload);
+
+			return new User($data->id, $data->username);
+		}
+
+		protected function doUpdate(object $data, EntityInterface $entity): void {
+			assert($data instanceof UserPayload);
+			assert($entity instanceof User);
+
+			if (isset($data->username))
+				$entity->setUsername($data->username);
+
+			if ($data->exists('favoriteColor'))
+				$entity->setFavoriteColor($data->favoriteColor);
+		}
+
+		protected function doDelete(EntityInterface $entity): void {
+			// No special behavior required for deleting the entity; this function can be left empty.
+		}
 	}

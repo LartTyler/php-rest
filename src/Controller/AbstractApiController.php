@@ -17,7 +17,7 @@
 	use DaybreakStudios\Rest\Event\Events\Entity\PostEntityCreateEvent;
 	use DaybreakStudios\Rest\Event\Events\Entity\PostEntityUpdateEvent;
 	use DaybreakStudios\Rest\Response\ResponseBuilderInterface;
-	use DaybreakStudios\Rest\Serializer\EntityNormalizerContextBuilder;
+	use DaybreakStudios\Rest\Serializer\ObjectNormalizerContextBuilder;
 	use DaybreakStudios\Rest\Transformer\TransformerInterface;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Doctrine\ORM\EntityManagerInterface;
@@ -193,7 +193,7 @@
 
 			return $this->responseBuilder->create(
 				$data,
-				context: (new EntityNormalizerContextBuilder())
+				context: (new ObjectNormalizerContextBuilder())
 					->withProjection($projection)
 					->withContext($this->createSerializerContext())
 					->toArray(),

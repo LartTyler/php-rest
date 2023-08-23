@@ -11,7 +11,7 @@
 		/**
 		 * @param T&object $data
 		 *
-		 * @return E
+		 * @return E&EntityInterface
 		 */
 		public function create(object $data): EntityInterface;
 
@@ -33,7 +33,7 @@
 		/**
 		 * @param E&EntityInterface $entity
 		 *
-		 * @return E
+		 * @return E&EntityInterface
 		 */
 		public function clone(EntityInterface $entity): EntityInterface;
 	}

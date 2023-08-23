@@ -2,19 +2,19 @@
 	namespace Serializer;
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
-	use DaybreakStudios\Rest\Serializer\EntityNormalizerContextBuilder;
-	use DaybreakStudios\Rest\Serializer\EntityNormalizer;
+	use DaybreakStudios\Rest\Serializer\ObjectNormalizer;
+	use DaybreakStudios\Rest\Serializer\ObjectNormalizerContextBuilder;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use PHPUnit\Framework\TestCase;
-	use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+	use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder as BaseObjectNormalizerContextBuilder;
 	use Symfony\Component\Serializer\Encoder\JsonEncoder;
 	use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 	use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
-	use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+	use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as BaseObjectNormalizer;
 	use Symfony\Component\Serializer\Serializer;
 
 	class EntityNormalizerTest extends TestCase {
-		protected EntityNormalizer $normalizer;
+		protected ObjectNormalizer $normalizer;
 
 		public function testNormalizeWithoutProjection() {
 			$entity = new TestEntity();
@@ -33,7 +33,7 @@
 
 		public function testNormalizeWithProjection() {
 			$entity = new TestEntity();
-			$context = (new EntityNormalizerContextBuilder())
+			$context = (new ObjectNormalizerContextBuilder())
 				->withProjection(
 					Projection::fromFields(
 						[
@@ -48,7 +48,7 @@
 
 		public function testNormalizeDifferentProjections() {
 			$entity = new TestEntity();
-			$context = (new EntityNormalizerContextBuilder())
+			$context = (new ObjectNormalizerContextBuilder())
 				->withProjection(
 					Projection::fromFields(
 						[
@@ -80,7 +80,7 @@
 			$entity->expects($this->once())->method('getId')->willReturn(0);
 			$entity->expects($this->once())->method('getName')->willReturn('Test');
 
-			$context = (new EntityNormalizerContextBuilder())
+			$context = (new ObjectNormalizerContextBuilder())
 				->withContext($this->getMockObjectIgnoredAttributesContext())
 				->withProjection(
 					Projection::fromFields(
@@ -111,7 +111,7 @@
 				$output,
 			);
 
-			$context = (new EntityNormalizerContextBuilder())
+			$context = (new ObjectNormalizerContextBuilder())
 				->withProjection(
 					Projection::fromFields(
 						[
@@ -123,7 +123,7 @@
 			$output = $this->normalizer->normalize($parent, context: $context->toArray());
 			$this->assertEquals(['id' => 0], $output);
 
-			$context = (new EntityNormalizerContextBuilder())
+			$context = (new ObjectNormalizerContextBuilder())
 				->withProjection(
 					Projection::fromFields(
 						[
@@ -146,28 +146,144 @@
 			);
 		}
 
+		public function testStrictAttribute() {
+			$entity = new ParentEntity();
+			$context = (new ObjectNormalizerContextBuilder())
+				->withProjection(
+					Projection::fromFields(
+						[
+							'id' => true,
+						],
+					),
+				)
+				->withStrict(
+					[
+						'child',
+					],
+				);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+				],
+				$output,
+			);
+
+			$context = $context
+				->withProjection(
+					Projection::fromFields(
+						[
+							'child.bar' => true,
+						],
+						true,
+					),
+				)
+				->withStrict(
+					[
+						'child' => [
+							'isFoo',
+							'bar',
+						],
+					],
+				);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'id' => 0,
+						'name' => 'Test',
+						'bar' => 'bar',
+					],
+				],
+				$output,
+			);
+
+			$context = (new ObjectNormalizerContextBuilder())
+				->withProjection(
+					Projection::fromFields(
+						[
+							'child' => true,
+						],
+						true,
+					),
+				)
+				->withStrict(
+					[
+						'child',
+					],
+				);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'id' => 0,
+						'name' => 'Test',
+						'bar' => 'bar',
+						'isFoo' => true,
+					],
+				],
+				$output,
+			);
+
+			$context = (new ObjectNormalizerContextBuilder())
+				->withProjection(
+					Projection::fromFields(
+						[
+							'child' => true,
+						],
+						true,
+					),
+				)
+				->withStrict(
+					[
+						'child' => [
+							'isFoo',
+						],
+					],
+				);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'id' => 0,
+						'name' => 'Test',
+						'isFoo' => true,
+						'bar' => 'bar',
+					],
+				],
+				$output,
+			);
+		}
+
 		protected function setUp(): void {
 			$metadataFactory = new ClassMetadataFactory(new AnnotationLoader());
 
-			$objectNormalizer = new ObjectNormalizer($metadataFactory);
-			$this->normalizer = new EntityNormalizer($objectNormalizer, $metadataFactory);
+			$baseNormalizer = new BaseObjectNormalizer($metadataFactory);
+			$this->normalizer = new ObjectNormalizer($baseNormalizer, $metadataFactory);
 
-			$serializer = new Serializer(
+			// Yeah, this looks funky. Serializer automatically invokes setSerializer() where appropriate, so all we
+			// need to do is instantiate it, and it'll handle the rest.
+			new Serializer(
 				[
 					$this->normalizer,
-					$objectNormalizer,
-				], [
+					$baseNormalizer,
+				],
+				[
 					new JsonEncoder(),
-				]
+				],
 			);
-
-			$objectNormalizer->setSerializer($serializer);
-			$this->normalizer->setSerializer($serializer);
 		}
 
 		private function getMockObjectIgnoredAttributesContext(): array {
 			// Required in order to support passing mock objects to a normalizer
-			return (new ObjectNormalizerContextBuilder())
+			return (new BaseObjectNormalizerContextBuilder())
 				->withIgnoredAttributes(
 					[
 						'__phpunit_configurableMethods',

@@ -14,6 +14,7 @@
 		protected function __construct(
 			protected RequestStack $requestStack,
 			protected string $projectionKey = 'p',
+			protected string $defaultMatchBehaviorKey = '_default',
 		) {}
 
 		public function __invoke(ProjectionInitEvent $event): void {
@@ -30,7 +31,13 @@
 		}
 
 		protected function createProjection(array $fields): ProjectionInterface {
-			return Projection::fromFields($fields);
+			if (isset($fields[$this->defaultMatchBehaviorKey])) {
+				$default = (bool)$fields[$this->defaultMatchBehaviorKey];
+				unset($fields[$this->defaultMatchBehaviorKey]);
+			} else
+				$default = null;
+
+			return Projection::fromFields($fields, $default);
 		}
 
 		protected function getRawProjectionFromRequest(Request $request): string {

@@ -14,7 +14,9 @@
 
 		public function create(object $data, bool $skipValidation = false): EntityInterface {
 			$entity = $this->doCreate($data);
-			$this->update($data, $entity, true);
+
+			if ($this->checkShouldCallUpdateAfterCreate())
+				$this->update($data, $entity, true);
 
 			if (!$skipValidation)
 				$this->validate($entity);
@@ -36,13 +38,20 @@
 			$this->entityManager->remove($entity);
 		}
 
+		public function clone(EntityInterface $entity): EntityInterface {
+			$cloned = $this->doClone($entity);
+			$this->entityManager->persist($cloned);
+
+			return $cloned;
+		}
+
 		protected abstract function doCreate(object $data): EntityInterface;
 
 		protected abstract function doUpdate(object $data, EntityInterface $entity): void;
 
-		protected function doDelete(EntityInterface $entity) {
-			// stub
-		}
+		protected abstract function doDelete(EntityInterface $entity): void;
+
+		protected abstract function doClone(EntityInterface $original): EntityInterface;
 
 		protected function validate(EntityInterface $entity): void {
 			if (!$this->validator)
@@ -52,5 +61,12 @@
 
 			if ($errors->count() > 0)
 				throw new ConstraintViolationException($errors);
+		}
+
+		private function checkShouldCallUpdateAfterCreate(): bool {
+			if (method_exists($this, 'getShouldUpdateAfterCreate'))
+				return $this->getShouldUpdateAfterCreate();
+
+			return true;
 		}
 	}
