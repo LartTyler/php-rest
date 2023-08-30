@@ -22,7 +22,7 @@
 		 *
 		 * @return static
 		 */
-		public function setPayload(object $payload): static {
+		protected function setPayload(object $payload): static {
 			$this->payload = $payload;
 			return $this;
 		}

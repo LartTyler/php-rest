@@ -1,10 +1,10 @@
 <?php
-
 	namespace DaybreakStudios\Rest\Payload;
 
-	enum Intent: string {
-		case Create = 'create';
-		case Update = 'update';
-		case Delete = 'delete';
-		case Clone = 'clone';
+	final readonly class Intent {
+		public const CREATE = 'create';
+		public const UPDATE = 'update';
+		public const CLONE = 'clone';
+
+		private function __construct() {}
 	}

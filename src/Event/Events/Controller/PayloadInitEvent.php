@@ -16,6 +16,7 @@
 		 */
 		public function __construct(
 			private string $dtoClass,
+			private array $validationGroups,
 		) {}
 
 		/**
@@ -50,6 +51,14 @@
 		public function setDtoClass(string $dtoClass): static {
 			$this->dtoClass = $dtoClass;
 			return $this;
+		}
+
+		public function getValidationGroups(): array {
+			return $this->validationGroups;
+		}
+
+		public function setValidationGroups(array $validationGroups): void {
+			$this->validationGroups = $validationGroups;
 		}
 
 		public function getError(): ?ApiErrorInterface {

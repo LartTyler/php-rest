@@ -32,8 +32,9 @@
 
 		/**
 		 * @param E&EntityInterface $entity
+		 * @param object|null       $data
 		 *
 		 * @return E&EntityInterface
 		 */
-		public function clone(EntityInterface $entity): EntityInterface;
+		public function clone(EntityInterface $entity, object $data = null): EntityInterface;
 	}

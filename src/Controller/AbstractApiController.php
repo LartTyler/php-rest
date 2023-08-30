@@ -11,11 +11,14 @@
 	use DaybreakStudios\Rest\Event\Events\Controller\QueryInitEvent;
 	use DaybreakStudios\Rest\Event\Events\Controller\QueryLimitInitEvent;
 	use DaybreakStudios\Rest\Event\Events\Controller\QueryOffsetInitEvent;
+	use DaybreakStudios\Rest\Event\Events\Entity\EntityCloneEvent;
 	use DaybreakStudios\Rest\Event\Events\Entity\EntityCreateEvent;
 	use DaybreakStudios\Rest\Event\Events\Entity\EntityDeleteEvent;
 	use DaybreakStudios\Rest\Event\Events\Entity\EntityUpdateEvent;
+	use DaybreakStudios\Rest\Event\Events\Entity\PostEntityCloneEvent;
 	use DaybreakStudios\Rest\Event\Events\Entity\PostEntityCreateEvent;
 	use DaybreakStudios\Rest\Event\Events\Entity\PostEntityUpdateEvent;
+	use DaybreakStudios\Rest\Payload\Intent;
 	use DaybreakStudios\Rest\Response\ResponseBuilderInterface;
 	use DaybreakStudios\Rest\Serializer\ObjectNormalizerContextBuilder;
 	use DaybreakStudios\Rest\Transformer\TransformerInterface;
@@ -49,7 +52,7 @@
 			TransformerInterface $transformer,
 			array $context = [],
 		): Response {
-			$event = new PayloadInitEvent($dtoClass);
+			$event = new PayloadInitEvent($dtoClass, [Intent::CREATE]);
 			$this->eventDispatcher->dispatch($event);
 
 			$data = $event->getInstance();
@@ -91,7 +94,7 @@
 			TransformerInterface $transformer,
 			array $context = [],
 		): Response {
-			$event = new PayloadInitEvent($dtoClass);
+			$event = new PayloadInitEvent($dtoClass, [Intent::UPDATE]);
 			$this->eventDispatcher->dispatch($event);
 
 			$data = $event->getInstance();
@@ -100,7 +103,7 @@
 			try {
 				$transformer->update($data, $entity);
 			} catch (\Exception $exception) {
-				$this->tryHandleException($exception);
+				return $this->tryHandleException($exception);
 			}
 
 			$event = new EntityUpdateEvent($entity, $data);
@@ -117,6 +120,53 @@
 			}
 
 			return $this->respond($entity, $context);
+		}
+
+		/**
+		 * @param EntityInterface      $entity
+		 * @param TransformerInterface $transformer
+		 * @param string|null          $dtoClass the fully-qualified class name to deserialize the request body into;
+		 *                                       if `null`, the request body will be ignored and your transformer will
+		 *                                       not receive a payload object
+		 * @param array                $context  serializer context
+		 *
+		 * @return Response
+		 */
+		protected function doClone(
+			EntityInterface $entity,
+			TransformerInterface $transformer,
+			string $dtoClass = null,
+			array $context = [],
+		): Response {
+			if ($dtoClass !== null) {
+				$event = new PayloadInitEvent($dtoClass, [Intent::CLONE]);
+				$this->eventDispatcher->dispatch($event);
+
+				$data = $event->getInstance();
+				assert($this->checkPayloadInstanceNotNull($data));
+			} else
+				$data = null;
+
+			try {
+				$cloned = $transformer->clone($entity, $data);
+			} catch (\Exception $exception) {
+				return $this->tryHandleException($exception);
+			}
+
+			$event = new EntityCloneEvent($entity, $cloned, $data);
+			$this->eventDispatcher->dispatch($event);
+
+			if ($event->getShouldFlush()) {
+				$this->entityManager->flush();
+
+				$event = new PostEntityCloneEvent($entity, $cloned, $data);
+				$this->eventDispatcher->dispatch($event);
+
+				if ($event->getShouldFlush())
+					$this->entityManager->flush();
+			}
+
+			return $this->respond($cloned, $context);
 		}
 
 		protected function doDelete(EntityInterface $entity, TransformerInterface $transformer): Response {
