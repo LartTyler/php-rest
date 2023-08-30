@@ -3,10 +3,15 @@
 
 	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
 	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
+	use DaybreakStudios\Rest\Transformer\Errors\ConstraintViolationError;
 	use Psr\EventDispatcher\EventDispatcherInterface;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\RequestStack;
+	use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 	use Symfony\Component\Serializer\SerializerInterface;
+	use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
+	use Symfony\Component\Validator\ConstraintViolationList;
+	use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 	#[AsEventListener]
 	class PayloadInitListener {
@@ -25,12 +30,46 @@
 					$event->getDtoClass(),
 					$this->getDefaultFormat(),
 				);
-			} catch (\TypeError) {
-				// TODO Handle \TypeError during deserialization /tyler
+			} catch (PartialDenormalizationException $exception) {
+				// If symfony/validator isn't installed, just rethrow the exception
+				if (!class_exists('Symfony\Component\Validator\ConstraintViolationList'))
+					throw $exception;
 
-				// A \TypeError here almost certainly means that the deserializer couldn't set the value of one of the
-				// properties in the DTO class we're deserializing into. We'll need to convert it to a
-				// ConstraintViolationError... somehow...
+				$violations = new ConstraintViolationList();
+
+				foreach ($exception->getErrors() as $error) {
+					// The following code is adapted from Symfony\Component\Validator\Validator\RecursiveValidator and
+					// Symfony\Component\Validator\Constraints\TypeValidator in order to mimic the behavior of a "real"
+					// validator constraint violation.
+
+					$constraint = new TypeConstraint($error->getExpectedTypes());
+
+					// Both $root and $invalidValue are `null` below because we don't know those two values at this
+					// point. At the time of writing, those two values seem to only be used when invoking
+					// ConstraintViolation::__toString(), which we don't use in order to build the final error object.
+					$builder = new ConstraintViolationBuilder(
+						$violations,
+						$constraint,
+						$constraint->message,
+						[],
+						null,
+						$error->getPath(),
+						null,
+						TranslatorStub::instance(),
+					);
+
+					$builder
+						->setParameter('{{ type }}', implode('|', (array)$constraint->type))
+						->setCode(TypeConstraint::INVALID_TYPE_ERROR)
+						->addViolation();
+				}
+
+				// On the off-chance that we couldn't build any violations, rethrow the exception and let someone else
+				// deal with it.
+				if ($violations->count() === 0)
+					throw $exception;
+
+				$event->setError(new ConstraintViolationError($violations));
 
 				return;
 			}

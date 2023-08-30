@@ -11,6 +11,7 @@
 	use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 	use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 	use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+	use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 	use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as WrappedObjectNormalizer;
 
 	class ObjectNormalizer extends AbstractObjectNormalizer {
@@ -26,6 +27,14 @@
 			// ALLOW_EXTRA_ATTRIBUTES must always be `false`. The AbstractObjectNormalizer contains some BC code that
 			// causes the return value from AbstractNormalizer::getAllowedAttributes() to be ignored.
 			$context = [static::ALLOW_EXTRA_ATTRIBUTES => false] + $defaultContext;
+
+			// On the other hand, we should only attempt to append the following contexts if they weren't explicitly
+			// set. This way, a user can control optional behaviors of this normalizer.
+			$context += [
+				// Normally we want to collect denormalization errors, so we can convert them to a
+				// ConstraintViolationError to send back to the API consumer.
+				DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
+			];
 
 			parent::__construct(
 				$classMetadataFactory,
