@@ -38,8 +38,8 @@
 			$this->entityManager->remove($entity);
 		}
 
-		public function clone(EntityInterface $entity, object $data = null): EntityInterface {
-			$cloned = $this->doClone($entity, $data);
+		public function clone(EntityInterface $original, object $data = null): EntityInterface {
+			$cloned = $this->doClone($original, $data);
 			$this->entityManager->persist($cloned);
 
 			return $cloned;

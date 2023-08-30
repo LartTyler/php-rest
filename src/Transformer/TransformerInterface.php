@@ -31,10 +31,10 @@
 		public function delete(EntityInterface $entity): void;
 
 		/**
-		 * @param E&EntityInterface $entity
+		 * @param E&EntityInterface $original
 		 * @param object|null       $data
 		 *
 		 * @return E&EntityInterface
 		 */
-		public function clone(EntityInterface $entity, object $data = null): EntityInterface;
+		public function clone(EntityInterface $original, object $data = null): EntityInterface;
 	}

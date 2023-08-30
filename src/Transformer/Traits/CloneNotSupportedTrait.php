@@ -9,7 +9,7 @@
 	 * @see TransformerInterface::clone()
 	 */
 	trait CloneNotSupportedTrait {
-		public function	doClone(EntityInterface $original): EntityInterface {
+		public function	doClone(EntityInterface $original, object $data = null): EntityInterface {
 			throw new ActionNotSupportedException(static::class, 'clone');
 		}
 	}
