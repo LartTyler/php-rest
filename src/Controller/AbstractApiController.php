@@ -174,9 +174,6 @@
 
 			$builder->setOffset($event->getOffset());
 
-			if ($configurator !== null)
-				$configurator($builder);
-
 			$query = $builder->getQuery();
 
 			if (null !== $limit = $builder->getLimit() && $query->getMaxResults() === null)
