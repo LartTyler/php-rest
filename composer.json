@@ -1,6 +1,6 @@
 {
 	"name": "dbstudios/php-rest",
-	"type": "library",
+	"type": "symfony-bundle",
 	"license": "GPL-3.0",
 	"authors": [
 		{

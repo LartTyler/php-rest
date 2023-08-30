@@ -9,7 +9,7 @@
 	class DefaultRequestFormatProvider {
 		public function __construct(
 			protected RequestStack $requestStack,
-			protected ?string $defaultFormat = null,
+			protected string $defaultFormat = 'json',
 		) {}
 
 		public function __invoke(DefaultRequestFormatEvent $event): void {

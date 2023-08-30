@@ -14,7 +14,6 @@
 			protected SerializerInterface $serializer,
 			protected RequestStack $requestStack,
 			protected EventDispatcherInterface $eventDispatcher,
-			protected string $defaultFormat = 'json',
 		) {}
 
 		public function __invoke(PayloadInitEvent $event): void {
@@ -43,6 +42,6 @@
 			$event = new DefaultRequestFormatEvent();
 			$this->eventDispatcher->dispatch($event);
 
-			return $event->getDefaultFormat() ?? $this->defaultFormat;
+			return $event->getDefaultFormat();
 		}
 	}

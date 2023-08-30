@@ -10,8 +10,7 @@
 	class ResponseBuilder implements ResponseBuilderInterface {
 		public function __construct(
 			protected SerializerInterface $serializer,
-			protected string $defaultFormat = 'json',
-			protected ?EventDispatcherInterface $eventDispatcher = null,
+			protected EventDispatcherInterface $eventDispatcher,
 		) {}
 
 		public function create(mixed $data, int $status = null, array $headers = [], array $context = []): Response {
@@ -56,13 +55,9 @@
 		}
 
 		protected function getDefaultFormat(): string {
-			if ($this->eventDispatcher) {
-				$event = new DefaultRequestFormatEvent($this->defaultFormat);
-				$this->eventDispatcher->dispatch($event);
+			$event = new DefaultRequestFormatEvent();
+			$this->eventDispatcher->dispatch($event);
 
-				return $event->getDefaultFormat() ?? $this->defaultFormat;
-			}
-
-			return $this->defaultFormat;
+			return $event->getDefaultFormat();
 		}
 	}
