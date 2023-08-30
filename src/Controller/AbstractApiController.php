@@ -186,15 +186,18 @@
 		}
 
 		/**
-		 * @param string $entityClass the fully-qualified class name of the root entity for the query
-		 * @param string $alias       the alias to use for the root entity in the {@see QueryBuilder}
-		 * @param array  $context     serializer context
+		 * @param string $entityClass    the fully-qualified class name of the root entity for the query
+		 * @param string $alias          the alias to use for the root entity in the {@see QueryBuilder}
+		 * @param array  $queryOverrides an array of parameters to apply on top of any query document provided by the
+		 *                               API client
+		 * @param array  $context        serializer context
 		 *
 		 * @return Response
 		 */
 		protected function doList(
 			string $entityClass,
 			string $alias = 'entity',
+			array $queryOverrides = [],
 			array $context = [],
 		): Response {
 			$query = $this->entityManager->getRepository($entityClass)->createQueryBuilder($alias);
@@ -233,7 +236,7 @@
 				$query->setFirstResult($offset);
 
 			try {
-				$this->queryManager->apply($query, $builder->getQueryDocument());
+				$this->queryManager->apply($query, $queryOverrides + $builder->getQueryDocument());
 			} catch (\Exception $exception) {
 				return $this->tryHandleException($exception);
 			}
