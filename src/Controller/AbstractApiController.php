@@ -41,16 +41,16 @@
 		/**
 		 * @template T of object
 		 *
-		 * @param class-string<T>      $dtoClass
-		 * @param TransformerInterface $transformer
-		 * @param array                $context serializer context
+		 * @param class-string<T>               $dtoClass
+		 * @param TransformerInterface          $transformer
+		 * @param ContextBuilderInterface|array $context serializer context
 		 *
 		 * @return Response
 		 */
 		protected function doCreate(
 			string $dtoClass,
 			TransformerInterface $transformer,
-			array $context = [],
+			ContextBuilderInterface|array $context = [],
 		): Response {
 			$event = new PayloadInitEvent($dtoClass, [Intent::CREATE]);
 			$this->eventDispatcher->dispatch($event);
@@ -81,10 +81,10 @@
 		}
 
 		/**
-		 * @param string               $dtoClass the class to deserialize the request body into
-		 * @param EntityInterface      $entity
-		 * @param TransformerInterface $transformer
-		 * @param array                $context  serializer context
+		 * @param string                        $dtoClass the class to deserialize the request body into
+		 * @param EntityInterface               $entity
+		 * @param TransformerInterface          $transformer
+		 * @param ContextBuilderInterface|array $context  serializer context
 		 *
 		 * @return Response
 		 */
@@ -92,7 +92,7 @@
 			string $dtoClass,
 			EntityInterface $entity,
 			TransformerInterface $transformer,
-			array $context = [],
+			ContextBuilderInterface|array $context = [],
 		): Response {
 			$event = new PayloadInitEvent($dtoClass, [Intent::UPDATE]);
 			$this->eventDispatcher->dispatch($event);
@@ -123,12 +123,12 @@
 		}
 
 		/**
-		 * @param EntityInterface      $entity
-		 * @param TransformerInterface $transformer
-		 * @param string|null          $dtoClass the fully-qualified class name to deserialize the request body into;
-		 *                                       if `null`, the request body will be ignored and your transformer will
-		 *                                       not receive a payload object
-		 * @param array                $context  serializer context
+		 * @param EntityInterface               $entity
+		 * @param TransformerInterface          $transformer
+		 * @param string|null                   $dtoClass the fully-qualified class name to deserialize the request
+		 *                                                body into; if `null`, the request body will be ignored and
+		 *                                                your transformer will not receive a payload object
+		 * @param ContextBuilderInterface|array $context  serializer context
 		 *
 		 * @return Response
 		 */
@@ -136,7 +136,7 @@
 			EntityInterface $entity,
 			TransformerInterface $transformer,
 			string $dtoClass = null,
-			array $context = [],
+			ContextBuilderInterface|array $context = [],
 		): Response {
 			if ($dtoClass !== null) {
 				$event = new PayloadInitEvent($dtoClass, [Intent::CLONE]);
@@ -186,11 +186,13 @@
 		}
 
 		/**
-		 * @param string $entityClass    the fully-qualified class name of the root entity for the query
-		 * @param string $alias          the alias to use for the root entity in the {@see QueryBuilder}
-		 * @param array  $queryOverrides an array of parameters to apply on top of any query document provided by the
-		 *                               API client
-		 * @param array  $context        serializer context
+		 * @param string                        $entityClass    the fully-qualified class name of the root entity for
+		 *                                                      the query
+		 * @param string                        $alias          the alias to use for the root entity in the
+		 *                                                      {@see QueryBuilder}
+		 * @param array                         $queryOverrides an array of parameters to apply on top of any query
+		 *                                                      document provided by the API client
+		 * @param ContextBuilderInterface|array $context        serializer context
 		 *
 		 * @return Response
 		 */
@@ -198,7 +200,7 @@
 			string $entityClass,
 			string $alias = 'entity',
 			array $queryOverrides = [],
-			array $context = [],
+			ContextBuilderInterface|array $context = [],
 		): Response {
 			$query = $this->entityManager->getRepository($entityClass)->createQueryBuilder($alias);
 			$builder = new ListResponseBuilder($query);
@@ -254,12 +256,12 @@
 		}
 
 		/**
-		 * @param mixed $data
-		 * @param array $context serializer context
+		 * @param mixed                         $data
+		 * @param ContextBuilderInterface|array $context serializer context
 		 *
 		 * @return Response
 		 */
-		protected function respond(mixed $data, array $context = []): Response {
+		protected function respond(mixed $data, ContextBuilderInterface|array $context = []): Response {
 			if ($data instanceof ApiErrorInterface)
 				return $this->responseBuilder->createError($data);
 
