@@ -17,13 +17,16 @@
 		public function __invoke(QueryLimitInitEvent $event): void {
 			$limit = $this->getRawLimitFromRequest($this->requestStack->getCurrentRequest());
 
+			if ($limit === null)
+				return;
+
 			if (is_numeric($limit) && 0 < $limit = (int)$limit)
 				$event->setLimit($limit);
 			else
 				$event->setError(new InvalidLimitError());
 		}
 
-		protected function getRawLimitFromRequest(Request $request): string {
+		protected function getRawLimitFromRequest(Request $request): ?string {
 			return $request->get($this->limitKey);
 		}
 	}

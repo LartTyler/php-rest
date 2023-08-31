@@ -20,14 +20,15 @@
 		public function __invoke(ProjectionInitEvent $event): void {
 			$projectionFields = $this->getRawProjectionFromRequest($this->requestStack->getCurrentRequest());
 
-			if ($projectionFields) {
-				$projectionFields = @json_decode($projectionFields, true);
+			if ($projectionFields === null)
+				return;
 
-				if (json_last_error() !== JSON_ERROR_NONE)
-					$event->setError(new ProjectionSyntaxError(json_last_error_msg()));
-				else
-					$event->setProjection($this->createProjection($projectionFields));
-			}
+			$projectionFields = @json_decode($projectionFields, true);
+
+			if (json_last_error() !== JSON_ERROR_NONE)
+				$event->setError(new ProjectionSyntaxError(json_last_error_msg()));
+			else
+				$event->setProjection($this->createProjection($projectionFields));
 		}
 
 		protected function createProjection(array $fields): ProjectionInterface {
@@ -40,7 +41,7 @@
 			return Projection::fromFields($fields, $default);
 		}
 
-		protected function getRawProjectionFromRequest(Request $request): string {
+		protected function getRawProjectionFromRequest(Request $request): ?string {
 			return $request->get($this->projectionKey);
 		}
 	}

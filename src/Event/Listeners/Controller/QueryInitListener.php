@@ -17,14 +17,15 @@
 		public function __invoke(QueryInitEvent $event): void {
 			$query = $this->getRawQueryFromRequest($this->requestStack->getCurrentRequest());
 
-			if ($query) {
-				$query = @json_decode($query, true);
+			if ($query === null)
+				return;
 
-				if (json_last_error() !== JSON_ERROR_NONE)
-					$event->setError(new QuerySyntaxError(json_last_error_msg()));
-				else
-					$event->setQuery($query);
-			}
+			$query = @json_decode($query, true);
+
+			if (json_last_error() !== JSON_ERROR_NONE)
+				$event->setError(new QuerySyntaxError(json_last_error_msg()));
+			else
+				$event->setQuery($query);
 		}
 
 		protected function getRawQueryFromRequest(Request $request): ?string {

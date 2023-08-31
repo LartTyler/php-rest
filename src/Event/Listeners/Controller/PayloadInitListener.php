@@ -7,6 +7,7 @@
 	use DaybreakStudios\Rest\Transformer\Errors\ConstraintViolationError;
 	use Psr\EventDispatcher\EventDispatcherInterface;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 	use Symfony\Component\Serializer\SerializerInterface;
@@ -24,10 +25,14 @@
 
 		public function __invoke(PayloadInitEvent $event): void {
 			$request = $this->requestStack->getCurrentRequest();
+			$content = $this->getRawPayloadFromRequest($request);
+
+			if ($content === null)
+				return;
 
 			try {
 				$instance = $this->serializer->deserialize(
-					$request->getContent(),
+					$content,
 					$event->getDtoClass(),
 					$this->getDefaultFormat(),
 				);
@@ -91,5 +96,9 @@
 			}
 
 			return $format;
+		}
+
+		protected function getRawPayloadFromRequest(Request $request): ?string {
+			return $request->getContent() ?: null;
 		}
 	}
