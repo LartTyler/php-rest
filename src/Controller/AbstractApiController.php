@@ -259,6 +259,9 @@
 			$event = new ProjectionInitEvent();
 			$this->eventDispatcher->dispatch($event);
 
+			if ($error = $event->getError())
+				return $this->responseBuilder->createError($error);
+
 			$projection = $event->getProjection() ?? Projection::fromFields([]);
 
 			return $this->responseBuilder->create(
