@@ -3,6 +3,7 @@
 
 	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
 	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
+	use DaybreakStudios\Rest\Event\Listeners\DefaultRequestFormatProvider;
 	use DaybreakStudios\Rest\Transformer\Errors\ConstraintViolationError;
 	use Psr\EventDispatcher\EventDispatcherInterface;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -81,6 +82,14 @@
 			$event = new DefaultRequestFormatEvent();
 			$this->eventDispatcher->dispatch($event);
 
-			return $event->getDefaultFormat();
+			if (null === $format = $event->getDefaultFormat()) {
+				throw new \InvalidArgumentException(
+					'Could not determine response format; did you forget to register '
+					. DefaultRequestFormatProvider::class
+					. '?',
+				);
+			}
+
+			return $format;
 		}
 	}
