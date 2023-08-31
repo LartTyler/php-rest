@@ -23,10 +23,10 @@
 			if ($projectionFields === null)
 				return;
 
-			$projectionFields = @json_decode($projectionFields, true);
+			$projectionFields = json_decode($projectionFields, true);
 
 			if (json_last_error() !== JSON_ERROR_NONE)
-				$event->setError(new ProjectionSyntaxError(json_last_error_msg()));
+				$event->setError(new ProjectionSyntaxError(strtolower(json_last_error_msg())));
 			else
 				$event->setProjection($this->createProjection($projectionFields));
 		}
