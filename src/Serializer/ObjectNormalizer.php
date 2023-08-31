@@ -25,17 +25,11 @@
 			callable $objectClassResolver = null,
 			array $defaultContext = [],
 		) {
-			// ALLOW_EXTRA_ATTRIBUTES must always be `false`. The AbstractObjectNormalizer contains some BC code that
-			// causes the return value from AbstractNormalizer::getAllowedAttributes() to be ignored.
-			$context = [static::ALLOW_EXTRA_ATTRIBUTES => false] + $defaultContext;
-
-			// On the other hand, we should only attempt to append the following contexts if they weren't explicitly
-			// set. This way, a user can control optional behaviors of this normalizer.
-			$context += [
+			$context = [
 				// Normally we want to collect denormalization errors, so we can convert them to a
 				// ConstraintViolationError to send back to the API consumer.
 				DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
-			];
+			] + $defaultContext;
 
 			parent::__construct(
 				$classMetadataFactory,
@@ -129,7 +123,16 @@
 		}
 
 		protected function extractAttributes(object $object, string $format = null, array $context = []): array {
-			return $this->objectNormalizer->extractAttributes($object, $format, $context);
+			$attributes = [];
+
+			foreach ($this->objectNormalizer->extractAttributes($object, $format, $context) as $extractedAttribute) {
+				if (!$this->isAllowedByProjection($extractedAttribute, $context))
+					continue;
+
+				$attributes[] = $extractedAttribute;
+			}
+
+			return $attributes;
 		}
 
 		protected function getAttributeValue(
