@@ -31,7 +31,7 @@
 	use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 
 	abstract class AbstractApiController extends AbstractController {
-		protected function __construct(
+		public function __construct(
 			private readonly EventDispatcherInterface $eventDispatcher,
 			private readonly ResponseBuilderInterface $responseBuilder,
 			private readonly EntityManagerInterface $entityManager,
