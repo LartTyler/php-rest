@@ -238,7 +238,7 @@
 				$query->setFirstResult($offset);
 
 			try {
-				$this->queryManager->apply($query, $queryOverrides + $builder->getQueryDocument());
+				$this->queryManager->apply($query, $queryOverrides + ($builder->getQueryDocument() ?? []));
 			} catch (\Exception $exception) {
 				return $this->tryHandleException($exception);
 			}
