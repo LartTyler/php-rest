@@ -203,7 +203,22 @@
 			ContextBuilderInterface|array $context = [],
 		): Response {
 			$query = $this->entityManager->getRepository($entityClass)->createQueryBuilder($alias);
-			$builder = new ListResponseBuilder($query);
+
+			$event = new QueryLimitInitEvent();
+			$this->eventDispatcher->dispatch($event);
+
+			if ($error = $event->getError())
+				return $this->respond($error);
+			else if (null !== $limit = $event->getLimit())
+				$query->setMaxResults($limit);
+
+			$event = new QueryOffsetInitEvent();
+			$this->eventDispatcher->dispatch($event);
+
+			if ($error = $event->getError())
+				return $this->respond($error);
+			else if (null !== $offset = $event->getOffset())
+				$query->setFirstResult($offset);
 
 			$event = new QueryInitEvent();
 			$this->eventDispatcher->dispatch($event);
@@ -211,34 +226,10 @@
 			if ($error = $event->getError())
 				return $this->respond($error);
 
-			$builder->setQueryDocument($event->getQuery());
-
-			$event = new QueryLimitInitEvent();
-			$this->eventDispatcher->dispatch($event);
-
-			if ($error = $event->getError())
-				return $this->respond($error);
-
-			$builder->setLimit($event->getLimit());
-
-			$event = new QueryOffsetInitEvent();
-			$this->eventDispatcher->dispatch($event);
-
-			if ($error = $event->getError())
-				return $this->respond($error);
-
-			$builder->setOffset($event->getOffset());
-
-			$query = $builder->getQuery();
-
-			if (null !== $limit = $builder->getLimit() && $query->getMaxResults() === null)
-				$query->setMaxResults($limit);
-
-			if (null !== $offset = $builder->getOffset() && $query->getFirstResult() === null)
-				$query->setFirstResult($offset);
+			$queryDocument = $event->getQuery() ?? [];
 
 			try {
-				$this->queryManager->apply($query, $queryOverrides + ($builder->getQueryDocument() ?? []));
+				$this->queryManager->apply($query, $queryOverrides + $queryDocument);
 			} catch (\Exception $exception) {
 				return $this->tryHandleException($exception);
 			}
