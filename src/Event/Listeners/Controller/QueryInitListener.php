@@ -27,7 +27,7 @@
 			}
 		}
 
-		protected function getRawQueryFromRequest(Request $request): string {
+		protected function getRawQueryFromRequest(Request $request): ?string {
 			return $request->get($this->queryKey);
 		}
 	}
