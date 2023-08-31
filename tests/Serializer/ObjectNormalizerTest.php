@@ -384,3 +384,13 @@
 			return $this->child;
 		}
 	}
+
+	class CircularEntity implements EntityInterface {
+		public function __construct(
+			public ?CircularEntity $other = null,
+		) {}
+
+		public function getId(): ?int {
+			return 0;
+		}
+	}

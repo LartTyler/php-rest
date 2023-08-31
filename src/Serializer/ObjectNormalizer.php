@@ -6,6 +6,7 @@
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\ProjectionInterface;
 	use DaybreakStudios\Rest\Serializer\ObjectNormalizerContextBuilder as Context;
+	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 	use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;
 	use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
@@ -166,6 +167,13 @@
 				unset($context[Context::STRICT]);
 
 			return $context;
+		}
+
+		protected function handleCircularReference(object $object, string $format = null, array $context = []): mixed {
+			if ($object instanceof EntityInterface)
+				return ['id' => $object->getId()];
+
+			return parent::handleCircularReference($object, $format, $context);
 		}
 
 		/**
