@@ -14,6 +14,7 @@
 	use Symfony\Component\Serializer\Serializer;
 
 	class ObjectNormalizerTest extends TestCase {
+		protected Serializer $serializer;
 		protected ObjectNormalizer $normalizer;
 
 		public function testNormalizeWithoutProjection() {
@@ -304,15 +305,60 @@
 			);
 		}
 
+		public function testArray() {
+			$entities = [
+				new TestEntity(),
+				new TestEntity(),
+				new TestEntity(),
+			];
+
+			$context = (new ObjectNormalizerContextBuilder())
+				->withProjection(Projection::fromFields(['id' => true]));
+
+			$output = $this->serializer->normalize($entities, context: $context->toArray());
+			$this->assertEquals(
+				[
+					[
+						'id' => 0,
+					],
+					[
+						'id' => 0,
+					],
+					[
+						'id' => 0,
+					],
+				],
+				$output,
+			);
+		}
+
+		public function testCircularReference() {
+			$entityA = new CircularEntity();
+			$entityB = new CircularEntity($entityA);
+			$entityA->other = $entityB;
+
+			$output = $this->normalizer->normalize($entityA);
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'other' => [
+						'id' => 0,
+						'other' => [
+							'id' => 0,
+						],
+					],
+				],
+				$output,
+			);
+		}
+
 		protected function setUp(): void {
 			$metadataFactory = new ClassMetadataFactory(new AnnotationLoader());
 
 			$baseNormalizer = new BaseObjectNormalizer($metadataFactory);
 			$this->normalizer = new ObjectNormalizer($baseNormalizer, $metadataFactory);
 
-			// Yeah, this looks funky. Serializer automatically invokes setSerializer() where appropriate, so all we
-			// need to do is instantiate it, and it'll handle the rest.
-			new Serializer(
+			$this->serializer = new Serializer(
 				[
 					$this->normalizer,
 					$baseNormalizer,
