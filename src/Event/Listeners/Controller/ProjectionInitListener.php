@@ -11,7 +11,7 @@
 
 	#[AsEventListener]
 	class ProjectionInitListener {
-		protected function __construct(
+		public function __construct(
 			protected RequestStack $requestStack,
 			protected string $projectionKey = 'p',
 			protected string $defaultMatchBehaviorKey = '_default',
