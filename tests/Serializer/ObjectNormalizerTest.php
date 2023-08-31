@@ -13,7 +13,7 @@
 	use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as BaseObjectNormalizer;
 	use Symfony\Component\Serializer\Serializer;
 
-	class EntityNormalizerTest extends TestCase {
+	class ObjectNormalizerTest extends TestCase {
 		protected ObjectNormalizer $normalizer;
 
 		public function testNormalizeWithoutProjection() {
@@ -256,6 +256,48 @@
 						'name' => 'Test',
 						'isFoo' => true,
 						'bar' => 'bar',
+					],
+				],
+				$output,
+			);
+
+			$context = (new ObjectNormalizerContextBuilder())
+				->withStrict(
+					[
+						'child' => [
+							'*',
+							'-name',
+						],
+					],
+				);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'name' => 'Test',
+					],
+				],
+				$output,
+			);
+
+			$context = $context->withProjection(
+				Projection::fromFields(
+					[
+						'child.id' => true,
+					],
+					true,
+				),
+			);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'name' => 'Test',
+						'id' => 0,
 					],
 				],
 				$output,

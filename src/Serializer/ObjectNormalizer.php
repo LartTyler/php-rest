@@ -97,6 +97,10 @@
 		/**
 		 * Returns `true` if the attribute should be checked using {@see ProjectionInterface::isAllowedExplicitly()}.
 		 *
+		 * Examples:
+		 * ["id", "name" => ["first"]] => id, name.first
+		 * ["*", "-name"] => all fields except name
+		 *
 		 * @param string $attribute
 		 * @param array  $context
 		 *
@@ -109,8 +113,17 @@
 			if (!is_array($strictAttributes))
 				return false;
 
-			// An attribute is only strict if it's a value in the array. If it's a key, we can assume it has child
-			// nodes that are strict, which will be handled later when we normalize children.
+			// If the attribute name prefixed with a minus "-" is in the array, then the field has been explicitly
+			// flagged as NOT strict.
+			if (in_array("-" . $attribute, $strictAttributes))
+				return false;
+
+			// If the match-all symbol is found in the array, then ALL fields at this level are flagged as strict.
+			if (in_array(ProjectionInterface::MATCH_ALL_SYMBOL, $strictAttributes))
+				return true;
+
+			// Finally, the attribute can only still be strict if it's a value in the array. If it's a key, we can
+			// assume it has child nodes that are strict, which will be handled later when we normalize children.
 			return in_array($attribute, $strictAttributes, true);
 		}
 
