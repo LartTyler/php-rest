@@ -7,7 +7,7 @@
 	use Symfony\Component\Validator\Constraint;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-	#[AsEventListener(priority: 100)]
+	#[AsEventListener(priority: -100)]
 	class PayloadInitValidationListener {
 		public function __construct(
 			protected ValidatorInterface $validator,
