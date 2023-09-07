@@ -303,6 +303,23 @@
 				],
 				$output,
 			);
+
+			$context = $context->withStrict(
+				[
+					'child',
+				],
+			);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'id' => 0,
+					],
+				],
+				$output,
+			);
 		}
 
 		public function testArray() {
