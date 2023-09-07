@@ -55,6 +55,9 @@
 			$event = new PayloadInitEvent($dtoClass, [Intent::CREATE]);
 			$this->eventDispatcher->dispatch($event);
 
+			if ($error = $event->getError())
+				return $this->respond($error);
+
 			$data = $event->getInstance();
 			assert($this->checkPayloadInstanceNotNull($data));
 
@@ -96,6 +99,9 @@
 		): Response {
 			$event = new PayloadInitEvent($dtoClass, [Intent::UPDATE]);
 			$this->eventDispatcher->dispatch($event);
+
+			if ($error = $event->getError())
+				return $this->respond($error);
 
 			$data = $event->getInstance();
 			assert($this->checkPayloadInstanceNotNull($data));
@@ -141,6 +147,9 @@
 			if ($dtoClass !== null) {
 				$event = new PayloadInitEvent($dtoClass, [Intent::CLONE]);
 				$this->eventDispatcher->dispatch($event);
+
+				if ($error = $event->getError())
+					return $this->respond($error);
 
 				$data = $event->getInstance();
 				assert($this->checkPayloadInstanceNotNull($data));
