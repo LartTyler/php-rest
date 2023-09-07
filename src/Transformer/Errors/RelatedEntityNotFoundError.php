@@ -6,15 +6,10 @@
 
 	class RelatedEntityNotFoundError extends ApiError {
 		public function __construct(
-			string $field,
+			string $message,
 			?int $httpStatus = Response::HTTP_BAD_REQUEST,
 			array $context = [],
 		) {
-			parent::__construct(
-				'transformer.entity_not_found',
-				sprintf('The entity identified in "%s" could not be found', $field),
-				$httpStatus,
-				$context,
-			);
+			parent::__construct('transformer.entity_not_found', $message, $httpStatus, $context);
 		}
 	}
