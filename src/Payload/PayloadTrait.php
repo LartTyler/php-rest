@@ -50,7 +50,7 @@
 				throw new PropertyNotFoundException(static::class, $property, previous: $exception);
 			}
 
-			return $this->propertyCache[$property] = $reflectionProperty->isInitialized();
+			return $this->propertyCache[$property] = $reflectionProperty->isInitialized($this);
 		}
 
 		/**
