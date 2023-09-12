@@ -1,6 +1,7 @@
 <?php
 	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
 
+	use DaybreakStudios\Rest\Error\Errors\Controller\EmptyPayloadError;
 	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
 	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
 	use DaybreakStudios\Rest\Event\Listeners\DefaultRequestFormatProvider;
@@ -27,8 +28,10 @@
 			$request = $this->requestStack->getCurrentRequest();
 			$content = $this->getRawPayloadFromRequest($request);
 
-			if ($content === null)
+			if ($content === null) {
+				$event->setError(new EmptyPayloadError());
 				return;
+			}
 
 			try {
 				$instance = $this->serializer->deserialize(
