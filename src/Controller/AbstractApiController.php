@@ -294,7 +294,7 @@
 			return [];
 		}
 
-		private function checkPayloadInstanceNotNull(?object $data): bool {
+		protected function checkPayloadInstanceNotNull(?object $data): bool {
 			if ($data === null)
 				throw new NullPayloadException();
 
