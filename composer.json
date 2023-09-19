@@ -14,7 +14,7 @@
 		}
 	},
 	"require": {
-		"php": ">=8.2"
+		"php": ">=8.1"
 	},
 	"require-dev": {
 		"symfony/framework-bundle": "^6.3",
