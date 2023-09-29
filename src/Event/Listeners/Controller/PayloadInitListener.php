@@ -13,6 +13,7 @@
 	use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 	use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 	use Symfony\Component\Serializer\Exception\UnexpectedValueException;
+	use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 	use Symfony\Component\Validator\ConstraintViolationList;
@@ -40,6 +41,9 @@
 					$content,
 					$event->getDtoClass(),
 					$this->getDefaultFormat(),
+					[
+						DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
+					],
 				);
 			} catch (UnexpectedValueException $exception) {
 				// If symfony/validator isn't installed, just rethrow the exception
