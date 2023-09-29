@@ -10,7 +10,9 @@
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;
+	use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 	use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
+	use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 	use Symfony\Component\Serializer\SerializerInterface;
 	use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 	use Symfony\Component\Validator\ConstraintViolationList;
@@ -39,14 +41,14 @@
 					$event->getDtoClass(),
 					$this->getDefaultFormat(),
 				);
-			} catch (PartialDenormalizationException $exception) {
+			} catch (UnexpectedValueException $exception) {
 				// If symfony/validator isn't installed, just rethrow the exception
 				if (!class_exists('Symfony\Component\Validator\ConstraintViolationList'))
 					throw $exception;
 
 				$violations = new ConstraintViolationList();
 
-				foreach ($exception->getErrors() as $error) {
+				foreach ($this->extractErrorsFromException($exception) as $error) {
 					// The following code is adapted from Symfony\Component\Validator\Validator\RecursiveValidator and
 					// Symfony\Component\Validator\Constraints\TypeValidator in order to mimic the behavior of a "real"
 					// validator constraint violation.
@@ -103,5 +105,20 @@
 
 		protected function getRawPayloadFromRequest(Request $request): ?string {
 			return $request->getContent() ?: null;
+		}
+
+		/**
+		 * @param UnexpectedValueException $exception
+		 *
+		 * @return NotNormalizableValueException[]
+		 */
+		protected function extractErrorsFromException(UnexpectedValueException $exception): array {
+			return match (true) {
+				$exception instanceof NotNormalizableValueException => [$exception],
+				$exception instanceof PartialDenormalizationException => $exception->getErrors(),
+
+				// If we can't extract the type we want, just rethrow the exception and let someone else deal with it
+				default => throw $exception,
+			};
 		}
 	}
