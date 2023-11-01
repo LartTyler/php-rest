@@ -26,10 +26,10 @@
 			array $defaultContext = [],
 		) {
 			$context = [
-				// Normally we want to collect denormalization errors, so we can convert them to a
-				// ConstraintViolationError to send back to the API consumer.
-				DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
-			] + $defaultContext;
+					// Normally we want to collect denormalization errors, so we can convert them to a
+					// ConstraintViolationError to send back to the API consumer.
+					DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
+				] + $defaultContext;
 
 			parent::__construct(
 				$classMetadataFactory,
@@ -166,8 +166,15 @@
 
 			if (null !== $value = $context[Context::STRICT][$attribute] ?? null)
 				$context[Context::STRICT] = $value;
-			else
-				unset($context[Context::STRICT]);
+			else if (null !== $strictAttributes = $context[Context::STRICT] ?? null) {
+				$isNestedStrict = in_array(ProjectionInterface::MATCH_ALL_SYMBOL, $strictAttributes)
+					|| in_array($attribute, $strictAttributes);
+
+				if ($isNestedStrict)
+					$context[Context::STRICT] = [ProjectionInterface::MATCH_ALL_SYMBOL];
+				else
+					unset($context[Context::STRICT]);
+			}
 
 			return $context;
 		}

@@ -304,16 +304,41 @@
 				$output,
 			);
 
+			$context = (new ObjectNormalizerContextBuilder())
+				->withProjection(
+					Projection::fromFields(
+						[
+							'child.id' => true,
+						],
+						true,
+					),
+				)
+				->withStrict(
+					[
+						'child',
+					],
+				);
+
+			$output = $this->normalizer->normalize($entity, context: $context->toArray());
+			$this->assertEquals(
+				[
+					'id' => 0,
+					'child' => [
+						'id' => 0,
+					],
+				],
+				$output,
+			);
+
 			$context = $context->withStrict(
 				[
-					'child',
+					'*',
 				],
 			);
 
 			$output = $this->normalizer->normalize($entity, context: $context->toArray());
 			$this->assertEquals(
 				[
-					'id' => 0,
 					'child' => [
 						'id' => 0,
 					],
