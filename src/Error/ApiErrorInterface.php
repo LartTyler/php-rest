@@ -9,4 +9,6 @@
 		public function getHttpStatus(): ?int;
 
 		public function getContext(): ?array;
+
+		public function getHttpHeaders(): ?array;
 	}

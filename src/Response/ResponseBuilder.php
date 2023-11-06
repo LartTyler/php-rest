@@ -40,6 +40,9 @@
 			if ($status === null)
 				$status = $error->getHttpStatus() ?? Response::HTTP_BAD_REQUEST;
 
+			if ($errorHeaders = $error->getHttpHeaders())
+				$headers += $errorHeaders;
+
 			return $this->create(
 				[
 					'error' => $error,

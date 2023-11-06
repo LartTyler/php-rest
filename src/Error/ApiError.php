@@ -11,6 +11,9 @@
 			#[Ignore]
 			protected ?int $httpStatus = null,
 			protected array $context = [],
+
+			#[Ignore]
+			protected ?array $headers = null,
 		) {}
 
 		/**
@@ -39,5 +42,9 @@
 		 */
 		public function getContext(): array {
 			return $this->context;
+		}
+
+		public function getHttpHeaders(): ?array {
+			return $this->headers;
 		}
 	}
