@@ -140,7 +140,7 @@
 			string $attribute,
 			string $format = null,
 			array $context = [],
-		) {
+		): mixed {
 			return $this->objectNormalizer->getAttributeValue($object, $attribute, $format, $context);
 		}
 
