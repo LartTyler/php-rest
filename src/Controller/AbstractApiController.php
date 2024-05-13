@@ -32,10 +32,10 @@
 
 	abstract class AbstractApiController extends AbstractController {
 		public function __construct(
-			private readonly EventDispatcherInterface $eventDispatcher,
-			private readonly ResponseBuilderInterface $responseBuilder,
-			private readonly EntityManagerInterface $entityManager,
-			private readonly QueryManagerInterface $queryManager,
+			protected readonly EventDispatcherInterface $eventDispatcher,
+			protected readonly ResponseBuilderInterface $responseBuilder,
+			protected readonly EntityManagerInterface $entityManager,
+			protected readonly QueryManagerInterface $queryManager,
 		) {}
 
 		/**
