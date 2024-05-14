@@ -1,6 +1,8 @@
 <?php
 	namespace DaybreakStudios\RestBundle;
 
+	use DaybreakStudios\DoctrineQueryDocument\QueryManager;
+	use DaybreakStudios\DoctrineQueryDocument\QueryManagerInterface;
 	use DaybreakStudios\RestBundle\Config\Config;
 	use DaybreakStudios\RestBundle\Config\RequestConfig;
 	use DaybreakStudios\RestBundle\Error\AsApiErrorInterface;
@@ -33,6 +35,9 @@
 				->scalarNode('event_dispatcher')
 					->defaultValue('event_dispatcher')
 					->info('The event dispatcher to use for this bundle\'s events')->end()
+				->scalarNode('entity_manager')
+					->defaultValue('doctrine.orm.default_entity_manager')
+					->info('The preferred Doctrine entity manager to use')->end()
 				->scalarNode('validator')
 					->example('@app.validator')
 					->info('The validator service to use for payload and entity validation (if enabled)')->end()
@@ -111,13 +116,17 @@
 			ContainerBuilder $builder,
 		): void {
 			$config = new Config($config);
-
 			$services = $container->services();
 
 			$services
 				->set('dbstudios_rest.response_builder', ResponseBuilder::class)
 				->args([service($config->getSerializerId()), service($config->getEventDispatcherId())])
 				->alias(ResponseBuilderInterface::class, 'dbstudios_rest.response_builder');
+
+			$services
+				->set('dbstudios_rest.query_manager', QueryManager::class)
+				->args([service($config->getEntityManagerId())])
+				->alias(QueryManagerInterface::class, 'dbstudios_rest.query_manager');
 
 			$services
 				->set('dbstudios_rest.format_provider', DefaultRequestFormatProvider::class)

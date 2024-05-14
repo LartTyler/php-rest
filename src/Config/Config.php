@@ -17,6 +17,10 @@
 			return $this->config['validator'] ?? null;
 		}
 
+		public function getEntityManagerId(): string {
+			return $this->config['entity_manager'] ?? 'doctrine.orm.default_entity_manager';
+		}
+
 		public function getFallbackFormat(): string {
 			return $this->config['fallback_format'] ?? 'json';
 		}
