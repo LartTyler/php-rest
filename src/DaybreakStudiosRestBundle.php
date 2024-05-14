@@ -1,6 +1,8 @@
 <?php
 	namespace DaybreakStudios\RestBundle;
 
+	use DaybreakStudios\RestBundle\Config\Config;
+	use DaybreakStudios\RestBundle\Config\RequestConfig;
 	use DaybreakStudios\RestBundle\Error\AsApiErrorInterface;
 	use DaybreakStudios\RestBundle\Event\Listeners\Controller\PayloadInitListener;
 	use DaybreakStudios\RestBundle\Event\Listeners\Controller\PayloadInitValidationListener;
@@ -108,76 +110,71 @@
 			ContainerConfigurator $container,
 			ContainerBuilder $builder,
 		): void {
-			$serializer = service($config['serializer']);
-			$eventDispatcher = service($config['event_dispatcher'] ?? 'event_dispatcher');
+			$config = new Config($config);
 
-			$serviceBuilder = $container->services();
+			$services = $container->services();
 
-			$serviceBuilder
+			$services
 				->set('dbstudios_rest.response_builder', ResponseBuilder::class)
-				->args([$serializer, $eventDispatcher])
+				->args([service($config->getSerializerId()), service($config->getEventDispatcherId())])
 				->alias(ResponseBuilderInterface::class, 'dbstudios_rest.response_builder');
 
-			$serviceBuilder
+			$services
 				->set('dbstudios_rest.format_provider', DefaultRequestFormatProvider::class)
-				->args([service('request_stack'), $config['fallback_format'] ?? 'json']);
+				->args([service('request_stack'), $config->getFallbackFormat()]);
 
-			if ($config['wrap_error_exceptions'] ?? true) {
-				$serviceBuilder
+			if ($config->getShouldWrapErrorExceptions()) {
+				$services
 					->set('dbstudios.error_exception_handler', ErrorExceptionListener::class)
 					->args([service('dbstudios_rest.response_builder')]);
 			}
 
-			if ($config['payload'] ?? null !== false && $config['payload']['enabled'] ?? true) {
-				$serviceBuilder
+			if ($config->getPayloadConfig()->isEnabled()) {
+				$services
 					->set('dbstudios_rest.payload.init_listener', PayloadInitListener::class)
-					->args([$serializer, service('request_stack'), $eventDispatcher]);
+					->args(
+						[
+							service($config->getSerializerId()),
+							service('request_stack'),
+							service($config->getEventDispatcherId()),
+						],
+					);
 
-				if (($config['payload']['validate'] ?? true) && $config['validator']) {
-					$serviceBuilder
+				if ($config->getPayloadConfig()->isValidationEnabled() && $validatorId = $config->getValidatorId()) {
+					$services
 						->set('dbstudios_rest.payload.validation_listener', PayloadInitValidationListener::class)
-						->args([service($config['validator'])]);
+						->args([service($validatorId)]);
 				}
 			}
 
-			$this->initRequestServices($config['request'] ?? [], $serviceBuilder);
+			$this->initRequestServices($config->getRequestConfig(), $services);
 		}
 
-		/**
-		 * @param array                $config
-		 * @param ServicesConfigurator $container
-		 *
-		 * @return void
-		 */
-		protected function initRequestServices(array $config, ServicesConfigurator $container): void {
-			if ($config['projection'] ?? null !== false && $config['projection']['enabled'] ?? true) {
-				$container
+		protected function initRequestServices(RequestConfig $config, ServicesConfigurator $services): void {
+			if (($projection = $config->getProjectionConfig())->isEnabled()) {
+				$services
 					->set('dbstudios_rest.request.projection_listener', ProjectionInitListener::class)
 					->args(
-						[
-							service('request_stack'),
-							$config['projection']['key'] ?? 'p',
-							$config['projection']['defaultMatchBehaviorKey'] ?? '_default',
-						],
+						[service('request_stack'), $projection->getKey(), $projection->getDefaultMatchBehaviorKey()],
 					);
 			}
 
-			if ($config['query'] ?? null !== false && $config['query']['enabled'] ?? true) {
-				$container
+			if ($config->getQueryConfig()->isEnabled()) {
+				$services
 					->set('dbstudios_rest.request.query_listener', QueryInitListener::class)
-					->args([service('request_stack'), $config['query']['key'] ?? 'q']);
+					->args([service('request_stack'), $config->getQueryConfig()->getKey()]);
 			}
 
-			if ($config['limit'] ?? null !== false && $config['query']['enabled'] ?? true) {
-				$container
+			if ($config->getLimitConfig()->isEnabled()) {
+				$services
 					->set('dbstudios_rest.request.limit_listener', QueryLimitInitListener::class)
-					->args([service('request_stack'), $config['limit']['key'] ?? 'limit']);
+					->args([service('request_stack'), $config->getLimitConfig()->getKey()]);
 			}
 
-			if ($config['offset'] ?? null !== false && $config['offset']['enabled'] ?? true) {
-				$container
+			if ($config->getOffsetConfig()->isEnabled()) {
+				$services
 					->set('dbstudios_rest.request.offset_listener', QueryOffsetInitListener::class)
-					->args([service('request_stack'), $config['offset']['key'] ?? 'offset']);
+					->args([service('request_stack'), $config->getOffsetConfig()->getKey()]);
 			}
 		}
 	}
