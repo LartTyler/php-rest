@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Events\Entity;
+	namespace DaybreakStudios\RestBundle\Event\Events\Entity;
 
 	/**
 	 * @template T of object

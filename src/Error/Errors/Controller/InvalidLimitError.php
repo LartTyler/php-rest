@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Error\Errors\Controller;
+	namespace DaybreakStudios\RestBundle\Error\Errors\Controller;
 
-	use DaybreakStudios\Rest\Error\ApiError;
+	use DaybreakStudios\RestBundle\Error\ApiError;
 
 	class InvalidLimitError extends ApiError {
 		public function __construct() {

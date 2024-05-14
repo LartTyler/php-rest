@@ -1,11 +1,11 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
-	use DaybreakStudios\Rest\Error\Errors\Controller\EmptyPayloadError;
-	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
-	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
-	use DaybreakStudios\Rest\Event\Listeners\DefaultRequestFormatProvider;
-	use DaybreakStudios\Rest\Transformer\Errors\ConstraintViolationError;
+	use DaybreakStudios\RestBundle\Error\Errors\Controller\EmptyPayloadError;
+	use DaybreakStudios\RestBundle\Event\Events\Controller\PayloadInitEvent;
+	use DaybreakStudios\RestBundle\Event\Events\DefaultRequestFormatEvent;
+	use DaybreakStudios\RestBundle\Event\Listeners\DefaultRequestFormatProvider;
+	use DaybreakStudios\RestBundle\Transformer\Errors\ConstraintViolationError;
 	use Psr\EventDispatcher\EventDispatcherInterface;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\Request;

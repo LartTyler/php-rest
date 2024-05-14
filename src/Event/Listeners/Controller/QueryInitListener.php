@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
-	use DaybreakStudios\Rest\Error\Errors\QueryDocument\QuerySyntaxError;
-	use DaybreakStudios\Rest\Event\Events\Controller\QueryInitEvent;
+	use DaybreakStudios\RestBundle\Error\Errors\QueryDocument\QuerySyntaxError;
+	use DaybreakStudios\RestBundle\Event\Events\Controller\QueryInitEvent;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;

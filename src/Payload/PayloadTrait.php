@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Payload;
+	namespace DaybreakStudios\RestBundle\Payload;
 
-	use DaybreakStudios\Rest\Payload\Exceptions\PropertyNotFoundException;
+	use DaybreakStudios\RestBundle\Payload\Exceptions\PropertyNotFoundException;
 
 	/**
 	 * Intended to be used alongside PHP 8's `mixed` psuedo-type to test if a property was included in the payload. If

@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest;
+	namespace DaybreakStudios\RestBundle;
 
 	use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 

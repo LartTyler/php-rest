@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Payload;
+	namespace DaybreakStudios\RestBundle\Payload;
 
 	final class Intent {
 		public const CREATE = 'create';

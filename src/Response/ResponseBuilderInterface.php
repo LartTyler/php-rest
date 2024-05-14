@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Response;
+	namespace DaybreakStudios\RestBundle\Response;
 
-	use DaybreakStudios\Rest\Error\ApiErrorInterface;
+	use DaybreakStudios\RestBundle\Error\ApiErrorInterface;
 	use Symfony\Component\HttpFoundation\Response;
 
 	interface ResponseBuilderInterface {

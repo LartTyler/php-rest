@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Payload\Exceptions;
+	namespace DaybreakStudios\RestBundle\Payload\Exceptions;
 
 	class PropertyNotFoundException extends \Exception {
 		public function __construct(string $class, string $property, int $code = 0, ?\Throwable $previous = null) {

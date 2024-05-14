@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Response;
+	namespace DaybreakStudios\RestBundle\Response;
 
-	use DaybreakStudios\Rest\Error\ApiErrorInterface;
-	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
+	use DaybreakStudios\RestBundle\Error\ApiErrorInterface;
+	use DaybreakStudios\RestBundle\Event\Events\DefaultRequestFormatEvent;
 	use Psr\EventDispatcher\EventDispatcherInterface;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Serializer\SerializerInterface;

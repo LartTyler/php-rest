@@ -1,9 +1,9 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer\Exceptions;
+	namespace DaybreakStudios\RestBundle\Transformer\Exceptions;
 
-	use DaybreakStudios\Rest\Error\ApiErrorInterface;
-	use DaybreakStudios\Rest\Error\AsApiErrorInterface;
-	use DaybreakStudios\Rest\Transformer\Errors\RelatedEntityNotFoundError;
+	use DaybreakStudios\RestBundle\Error\ApiErrorInterface;
+	use DaybreakStudios\RestBundle\Error\AsApiErrorInterface;
+	use DaybreakStudios\RestBundle\Transformer\Errors\RelatedEntityNotFoundError;
 
 	class RelatedEntityNotFoundException extends \RuntimeException implements AsApiErrorInterface {
 		public function asApiError(): ApiErrorInterface {

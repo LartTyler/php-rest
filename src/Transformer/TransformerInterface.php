@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer;
+	namespace DaybreakStudios\RestBundle\Transformer;
 
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 

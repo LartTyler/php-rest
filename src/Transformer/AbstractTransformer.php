@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer;
+	namespace DaybreakStudios\RestBundle\Transformer;
 
-	use DaybreakStudios\Rest\Transformer\Exceptions\ConstraintViolationException;
+	use DaybreakStudios\RestBundle\Transformer\Exceptions\ConstraintViolationException;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;

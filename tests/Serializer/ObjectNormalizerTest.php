@@ -2,8 +2,8 @@
 	namespace Serializer;
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
-	use DaybreakStudios\Rest\Serializer\ObjectNormalizer;
-	use DaybreakStudios\Rest\Serializer\ObjectNormalizerContextBuilder;
+	use DaybreakStudios\RestBundle\Serializer\ObjectNormalizer;
+	use DaybreakStudios\RestBundle\Serializer\ObjectNormalizerContextBuilder;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use PHPUnit\Framework\TestCase;
 	use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder as BaseObjectNormalizerContextBuilder;

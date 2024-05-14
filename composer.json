@@ -10,7 +10,12 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"DaybreakStudios\\Rest\\": "./src"
+			"DaybreakStudios\\RestBundle\\": "./src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"DaybreakStudios\\RestBundle\\Tests\\": "./tests"
 		}
 	},
 	"require": {

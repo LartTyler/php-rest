@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
-	use DaybreakStudios\Rest\Error\Errors\Controller\InvalidLimitError;
-	use DaybreakStudios\Rest\Event\Events\Controller\QueryLimitInitEvent;
+	use DaybreakStudios\RestBundle\Error\Errors\Controller\InvalidLimitError;
+	use DaybreakStudios\RestBundle\Event\Events\Controller\QueryLimitInitEvent;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;

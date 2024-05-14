@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Error;
+	namespace DaybreakStudios\RestBundle\Error;
 
 	use Symfony\Component\Serializer\Annotation\Ignore;
 

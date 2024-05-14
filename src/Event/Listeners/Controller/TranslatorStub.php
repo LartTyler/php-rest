@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
 	use Symfony\Component\Validator\ValidatorBuilder;
 	use Symfony\Contracts\Translation\LocaleAwareInterface;

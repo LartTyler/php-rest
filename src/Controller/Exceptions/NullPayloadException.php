@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Controller\Exceptions;
+	namespace DaybreakStudios\RestBundle\Controller\Exceptions;
 
 	use JetBrains\PhpStorm\Pure;
 

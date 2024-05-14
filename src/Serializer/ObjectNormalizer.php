@@ -1,11 +1,11 @@
 <?php
-	namespace DaybreakStudios\Rest\Serializer;
+	namespace DaybreakStudios\RestBundle\Serializer;
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\PrefixableProjectionInterface;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\PrefixedProjection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\ProjectionInterface;
-	use DaybreakStudios\Rest\Serializer\ObjectNormalizerContextBuilder as Context;
+	use DaybreakStudios\RestBundle\Serializer\ObjectNormalizerContextBuilder as Context;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 	use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;

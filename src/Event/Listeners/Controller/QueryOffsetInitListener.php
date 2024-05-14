@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
-	use DaybreakStudios\Rest\Error\Errors\Controller\InvalidOffsetError;
-	use DaybreakStudios\Rest\Event\Events\Controller\QueryOffsetInitEvent;
+	use DaybreakStudios\RestBundle\Error\Errors\Controller\InvalidOffsetError;
+	use DaybreakStudios\RestBundle\Event\Events\Controller\QueryOffsetInitEvent;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;

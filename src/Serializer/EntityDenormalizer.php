@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Serializer;
+	namespace DaybreakStudios\RestBundle\Serializer;
 
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Doctrine\ORM\EntityManagerInterface;

@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer\Errors;
+	namespace DaybreakStudios\RestBundle\Transformer\Errors;
 
-	use DaybreakStudios\Rest\Error\ApiError;
+	use DaybreakStudios\RestBundle\Error\ApiError;
 	use Symfony\Component\HttpFoundation\Response;
 
 	class RelatedEntityNotFoundError extends ApiError {

@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners;
+	namespace DaybreakStudios\RestBundle\Event\Listeners;
 
-	use DaybreakStudios\Rest\Event\Events\DefaultRequestFormatEvent;
+	use DaybreakStudios\RestBundle\Event\Events\DefaultRequestFormatEvent;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\RequestStack;
 

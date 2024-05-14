@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Events\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Events\Controller;
 
-	use DaybreakStudios\Rest\Error\ApiErrorInterface;
+	use DaybreakStudios\RestBundle\Error\ApiErrorInterface;
 	use Symfony\Contracts\EventDispatcher\Event;
 
 	class QueryInitEvent extends Event {
