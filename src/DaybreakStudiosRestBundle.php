@@ -16,6 +16,8 @@
 	use DaybreakStudios\RestBundle\Event\Listeners\ErrorExceptionListener;
 	use DaybreakStudios\RestBundle\Response\ResponseBuilder;
 	use DaybreakStudios\RestBundle\Response\ResponseBuilderInterface;
+	use DaybreakStudios\RestBundle\Serializer\EntityDenormalizer;
+	use DaybreakStudios\RestBundle\Serializer\ObjectNormalizer;
 	use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 	use Symfony\Component\DependencyInjection\ContainerBuilder;
 	use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -130,12 +132,31 @@
 
 			$services
 				->set('dbstudios_rest.format_provider', DefaultRequestFormatProvider::class)
-				->args([service('request_stack'), $config->getFallbackFormat()]);
+				->args([service('request_stack'), $config->getFallbackFormat()])
+				->tag('kernel.event_listener');
+
+			$services
+				->set('dbstudios_rest.serializer.normalizer.object', ObjectNormalizer::class)
+				->args(
+					[
+						service('serializer.normalizer.object'),
+						service('serializer.mapping.class_metadata_factory'),
+						service('serializer.name_converter.metadata_aware'),
+						service('property_info')->ignoreOnInvalid(),
+						service('serializer.mapping.class_discriminator_resolver')->ignoreOnInvalid(),
+					],
+				)
+				->tag('serializer.normalizer');
+
+			$services
+				->set('dbstudios_rest.serializer.denormalizer.entity', EntityDenormalizer::class)
+				->args([service($config->getEntityManagerId())]);
 
 			if ($config->getShouldWrapErrorExceptions()) {
 				$services
 					->set('dbstudios.error_exception_handler', ErrorExceptionListener::class)
-					->args([service('dbstudios_rest.response_builder')]);
+					->args([service('dbstudios_rest.response_builder')])
+					->tag('kernel.event_listener');
 			}
 
 			if ($config->getPayloadConfig()->isEnabled()) {
@@ -147,12 +168,14 @@
 							service('request_stack'),
 							service($config->getEventDispatcherId()),
 						],
-					);
+					)
+					->tag('kernel.event_listener');
 
 				if ($config->getPayloadConfig()->isValidationEnabled() && $validatorId = $config->getValidatorId()) {
 					$services
 						->set('dbstudios_rest.payload.validation_listener', PayloadInitValidationListener::class)
-						->args([service($validatorId)]);
+						->args([service($validatorId)])
+						->tag('kernel.event_listener');
 				}
 			}
 
@@ -165,25 +188,29 @@
 					->set('dbstudios_rest.request.projection_listener', ProjectionInitListener::class)
 					->args(
 						[service('request_stack'), $projection->getKey(), $projection->getDefaultMatchBehaviorKey()],
-					);
+					)
+					->tag('kernel.event_listener');
 			}
 
 			if ($config->getQueryConfig()->isEnabled()) {
 				$services
 					->set('dbstudios_rest.request.query_listener', QueryInitListener::class)
-					->args([service('request_stack'), $config->getQueryConfig()->getKey()]);
+					->args([service('request_stack'), $config->getQueryConfig()->getKey()])
+					->tag('kernel.event_listener');
 			}
 
 			if ($config->getLimitConfig()->isEnabled()) {
 				$services
 					->set('dbstudios_rest.request.limit_listener', QueryLimitInitListener::class)
-					->args([service('request_stack'), $config->getLimitConfig()->getKey()]);
+					->args([service('request_stack'), $config->getLimitConfig()->getKey()])
+					->tag('kernel.event_listener');
 			}
 
 			if ($config->getOffsetConfig()->isEnabled()) {
 				$services
 					->set('dbstudios_rest.request.offset_listener', QueryOffsetInitListener::class)
-					->args([service('request_stack'), $config->getOffsetConfig()->getKey()]);
+					->args([service('request_stack'), $config->getOffsetConfig()->getKey()])
+					->tag('kernel.event_listener');
 			}
 		}
 	}
