@@ -1,5 +1,6 @@
 {
 	"name": "dbstudios/php-rest",
+	"description": "Provides common functionality for a basic Symfony REST application",
 	"type": "symfony-bundle",
 	"license": "GPL-3.0",
 	"authors": [
