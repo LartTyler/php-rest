@@ -1,7 +1,7 @@
 <?php
 	namespace DaybreakStudios\RestBundle\Config;
 
-	class RequestConfig {
+	class RequestConfig extends AbstractConfig {
 		protected ?ProjectionConfig $projectionConfig = null;
 		protected ?QueryConfig $queryConfig = null;
 		protected ?LimitConfig $limitConfig = null;

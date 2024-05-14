@@ -6,19 +6,19 @@
 		protected ?RequestConfig $requestConfig = null;
 
 		public function getSerializerId(): ?string {
-			return $this->config['serializer'] ?? null;
+			return $this->asServiceName($this->config['serializer'] ?? null);
 		}
 
 		public function getEventDispatcherId(): string {
-			return $this->config['event_dispatcher'] ?? 'event_dispatcher';
+			return $this->asServiceName($this->config['event_dispatcher'] ?? 'event_dispatcher');
 		}
 
 		public function getValidatorId(): ?string {
-			return $this->config['validator'] ?? null;
+			return $this->asServiceName($this->config['validator'] ?? null);
 		}
 
 		public function getEntityManagerId(): string {
-			return $this->config['entity_manager'] ?? 'doctrine.orm.default_entity_manager';
+			return $this->asServiceName($this->config['entity_manager'] ?? 'doctrine.orm.default_entity_manager');
 		}
 
 		public function getFallbackFormat(): string {
@@ -34,6 +34,10 @@
 		}
 
 		public function getRequestConfig(): RequestConfig {
-			return $this->req ??= new RequestConfig($this->config['request'] ?? []);
+			return $this->requestConfig ??= new RequestConfig($this->config['request'] ?? []);
+		}
+
+		protected function asServiceName(?string $input): ?string {
+			return !$input ? $input : ltrim($input, '@');
 		}
 	}
