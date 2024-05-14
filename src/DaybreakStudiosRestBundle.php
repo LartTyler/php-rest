@@ -51,6 +51,7 @@
 					->booleanNode('validate')
 						->defaultTrue()
 						->info('Toggles registration of the default `PayloadInitValidationEvent` listener')->end()
+					->end()
 				->end()
 				->arrayNode('request')->children()
 					->arrayNode('projection')->children()
@@ -64,6 +65,7 @@
 							->defaultValue('_default')
 							->info('The projection key to retrieve the default match behavior from (if set)')->end()
 						->end()
+					->end()
 					->arrayNode('query')->children()
 						->booleanNode('enabled')
 							->defaultTrue()
@@ -72,6 +74,7 @@
 							->defaultValue('q')
 							->info('The request key to retrieve the query object from')->end()
 						->end()
+					->end()
 					->arrayNode('limit')->children()
 						->booleanNode('enabled')
 							->defaultTrue()
@@ -80,6 +83,7 @@
 							->defaultValue('limit')
 							->info('The request key to retrieve the query limit from')->end()
 						->end()
+					->end()
 					->arrayNode('offset')->children()
 						->booleanNode('enabled')
 							->defaultTrue()
@@ -87,7 +91,8 @@
 						->scalarNode('key')
 							->defaultValue('offset')
 							->info('The request key to retrieve the query offset from')->end()
-						->end();
+						->end()
+					->end();
 			// @formatter:on
 		}
 
