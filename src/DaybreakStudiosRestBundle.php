@@ -29,6 +29,16 @@
 	use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 	class DaybreakStudiosRestBundle extends AbstractBundle {
+		public function build(ContainerBuilder $container): void {
+			if ($container->hasParameter('.dbstudios_rest.crud.entities')) {
+				$entities = $container->getParameter('.dbstudios_rest.crud.entities');
+				$useFormatParam = $container->getParameter('.dbstudios_rest.crud.use_format_param');
+				$prefixes = $container->getParameter('.dbstudios_rest.crud.prefixes');
+
+				$container->addCompilerPass(new CrudRoutingPass($entities, $useFormatParam, $prefixes));
+			}
+		}
+
 		public function configure(DefinitionConfigurator $definition): void {
 			$root = $definition->rootNode()->children();
 
@@ -161,8 +171,12 @@
 		): void {
 			$config = new Config($config);
 
-			if ($config->getCrudConfig()->isEnabled())
-				$builder->addCompilerPass(new CrudRoutingPass($config->getCrudConfig()));
+			if ($config->getCrudConfig()->isEnabled()) {
+				$container->parameters()
+					->set('.dbstudios_rest.crud.entities', $config->getCrudConfig()->getEntities())
+					->set('.dbstudios_rest.crud.use_format_param', $config->getCrudConfig()->getUseFormatParam())
+					->set('.dbstudios_rest.crud.prefixes', $config->getCrudConfig()->getPrefixes());
+			}
 
 			$services = $container->services();
 

@@ -1,7 +1,6 @@
 <?php
 	namespace DaybreakStudios\RestBundle\DependencyInjection;
 
-	use DaybreakStudios\RestBundle\Config\CrudConfig;
 	use DaybreakStudios\RestBundle\Controller\SimpleCrudController;
 	use DaybreakStudios\RestBundle\Entity\AsCrudEntity;
 	use DaybreakStudios\RestBundle\Entity\EntityLocator;
@@ -11,7 +10,9 @@
 
 	class CrudRoutingPass implements CompilerPassInterface {
 		public function __construct(
-			protected CrudConfig $config,
+			protected array $entities,
+			protected bool $useFormatParam,
+			protected array $prefixes,
 		) {}
 
 		public function process(ContainerBuilder $container): void {
@@ -22,14 +23,14 @@
 				(new Definition(CrudRouteLoader::class))
 					->setArguments(
 						[
-							$this->config->getEntities(),
-							$this->config->getUseFormatParam(),
-							$this->config->getPrefixes(),
+							$this->entities,
+							$this->useFormatParam,
+							$this->prefixes,
 						],
 					),
 			);
 
-			foreach ($this->config->getEntities() as $path) {
+			foreach ($this->entities as $path) {
 				$locator = new EntityLocator($path);
 
 				foreach ($locator as $class) {
