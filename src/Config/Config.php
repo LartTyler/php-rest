@@ -4,6 +4,7 @@
 	class Config extends AbstractConfig {
 		protected ?PayloadConfig $payloadConfig = null;
 		protected ?RequestConfig $requestConfig = null;
+		protected ?CrudConfig $crudConfig = null;
 
 		public function getSerializerId(): ?string {
 			return $this->asServiceName($this->config['serializer'] ?? null);
@@ -35,6 +36,10 @@
 
 		public function getRequestConfig(): RequestConfig {
 			return $this->requestConfig ??= new RequestConfig($this->config['request'] ?? []);
+		}
+
+		public function getCrudConfig(): CrudConfig {
+			return $this->crudConfig ??= new CrudConfig($this->config['crud'] ?? []);
 		}
 
 		protected function asServiceName(?string $input): ?string {

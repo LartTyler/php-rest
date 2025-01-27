@@ -32,7 +32,7 @@
 		 */
 		public function create(
 			mixed $data,
-			int $status = null,
+			?int $status = null,
 			array $headers = [],
 			array $context = [],
 		): Response;
@@ -64,7 +64,7 @@
 		 */
 		public function createError(
 			ApiErrorInterface $error,
-			int $status = null,
+			?int $status = null,
 			array $headers = [],
 			array $context = [],
 		): Response;

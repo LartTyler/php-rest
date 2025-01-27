@@ -18,10 +18,10 @@
 	class ObjectNormalizer extends AbstractObjectNormalizer {
 		public function __construct(
 			protected WrappedObjectNormalizer $objectNormalizer,
-			ClassMetadataFactoryInterface $classMetadataFactory = null,
-			NameConverterInterface $nameConverter = null,
+			?ClassMetadataFactoryInterface $classMetadataFactory = null,
+			?NameConverterInterface $nameConverter = null,
 			?PropertyTypeExtractorInterface $propertyTypeExtractor = null,
-			ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null,
+			?ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null,
 			callable $objectClassResolver = null,
 			array $defaultContext = [],
 		) {
@@ -50,7 +50,7 @@
 		protected function isAllowedAttribute(
 			object|string $classOrObject,
 			string $attribute,
-			string $format = null,
+			?string $format = null,
 			array $context = [],
 		): bool {
 			return $this->isAllowedByProjection($attribute, $context)
@@ -138,7 +138,7 @@
 		protected function getAttributeValue(
 			object $object,
 			string $attribute,
-			string $format = null,
+			?string $format = null,
 			array $context = [],
 		): mixed {
 			return $this->objectNormalizer->getAttributeValue($object, $attribute, $format, $context);
@@ -148,7 +148,7 @@
 			object $object,
 			string $attribute,
 			mixed $value,
-			string $format = null,
+			?string $format = null,
 			array $context = [],
 		): void {
 			$this->objectNormalizer->setAttributeValue($object, $attribute, $value, $format, $context);
@@ -179,7 +179,7 @@
 			return $context;
 		}
 
-		protected function handleCircularReference(object $object, string $format = null, array $context = []): mixed {
+		protected function handleCircularReference(object $object, ?string $format = null, array $context = []): mixed {
 			if ($object instanceof EntityInterface)
 				return ['id' => $object->getId()];
 

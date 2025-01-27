@@ -5,6 +5,8 @@
 	use DaybreakStudios\DoctrineQueryDocument\QueryManagerInterface;
 	use DaybreakStudios\RestBundle\Config\Config;
 	use DaybreakStudios\RestBundle\Config\RequestConfig;
+	use DaybreakStudios\RestBundle\DependencyInjection\CrudRoutingPass;
+	use DaybreakStudios\RestBundle\Entity\AsCrudEntity;
 	use DaybreakStudios\RestBundle\Error\AsApiErrorInterface;
 	use DaybreakStudios\RestBundle\Event\Listeners\Controller\PayloadInitListener;
 	use DaybreakStudios\RestBundle\Event\Listeners\Controller\PayloadInitValidationListener;
@@ -18,6 +20,7 @@
 	use DaybreakStudios\RestBundle\Response\ResponseBuilderInterface;
 	use DaybreakStudios\RestBundle\Serializer\EntityDenormalizer;
 	use DaybreakStudios\RestBundle\Serializer\ObjectNormalizer;
+	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 	use Symfony\Component\DependencyInjection\ContainerBuilder;
 	use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -32,76 +35,114 @@
 			// @formatter:off
 			$root
 				->scalarNode('serializer')
-					->example('app.serializer')
-					->info('The serializer service to use for REST endpoints')->end()
+					->example('@app.serializer')
+					->info('The serializer service to use for REST endpoints');
+
+			$root
 				->scalarNode('event_dispatcher')
 					->defaultValue('event_dispatcher')
-					->info('The event dispatcher to use for this bundle\'s events')->end()
-				->scalarNode('entity_manager')
+					->info('The event dispatcher to use for this bundle\'s events');
+
+			$root
+				->scalarNode('@entity_manager')
 					->defaultValue('doctrine.orm.default_entity_manager')
-					->info('The preferred Doctrine entity manager to use')->end()
+					->info('The preferred Doctrine entity manager to use');
+
+			$root
 				->scalarNode('validator')
 					->example('@app.validator')
-					->info('The validator service to use for payload and entity validation (if enabled)')->end()
+					->info('The validator service to use for payload and entity validation (if enabled)');
+
+			$root
 				->booleanNode('wrap_error_exceptions')
 					->defaultTrue()
 					->info(
 						'If true, uncaught exceptions implementing '
 						. AsApiErrorInterface::class
 						. ' will be converted to an error response',
-					)->end()
+					);
+
+			$root
 				->scalarNode('fallback_format')
 					->defaultValue('json')
-					->info('The format to use if one cannot be determined')->end()
+					->info('The format to use if one cannot be determined');
+
+			$root
 				->arrayNode('payload')->children()
 					->booleanNode('enabled')
 						->defaultTrue()
-						->info('Toggles registration of the default `PayloadInitEvent` listener')->end()
+						->info('Toggles registration of the default `PayloadInitEvent` listener')
+						->end()
 					->booleanNode('validate')
 						->defaultTrue()
-						->info('Toggles registration of the default `PayloadInitValidationEvent` listener')->end()
-					->end()
-				->end()
+						->info('Toggles registration of the default `PayloadInitValidationEvent` listener');
+
+			$root
 				->arrayNode('request')->children()
 					->arrayNode('projection')->children()
 						->booleanNode('enabled')
 							->defaultTrue()
-							->info('Toggles parsing of a projection object from the request')->end()
+							->info('Toggles parsing of a projection object from the request')
+							->end()
 						->scalarNode('key')
 							->defaultValue('p')
-							->info('The request key to retrieve the projection object from')->end()
+							->info('The request key to retrieve the projection object from')
+							->end()
 						->scalarNode('defaultMatchBehaviorKey')
 							->defaultValue('_default')
-							->info('The projection key to retrieve the default match behavior from (if set)')->end()
+							->info('The projection key to retrieve the default match behavior from (if set)');
+
+			$root
+				->arrayNode('query')->children()
+					->booleanNode('enabled')
+						->defaultTrue()
+						->info('Toggles parsing of a query object from the request')
 						->end()
-					->end()
-					->arrayNode('query')->children()
-						->booleanNode('enabled')
-							->defaultTrue()
-							->info('Toggles parsing of a query object from the request')->end()
-						->scalarNode('key')
-							->defaultValue('q')
-							->info('The request key to retrieve the query object from')->end()
+					->scalarNode('key')
+						->defaultValue('q')
+						->info('The request key to retrieve the query object from');
+
+			$root
+				->arrayNode('limit')->children()
+					->booleanNode('enabled')
+						->defaultTrue()
+						->info('Toggles parsing of a query limit from the request')
 						->end()
-					->end()
-					->arrayNode('limit')->children()
-						->booleanNode('enabled')
-							->defaultTrue()
-							->info('Toggles parsing of a query limit from the request')->end()
-						->scalarNode('key')
-							->defaultValue('limit')
-							->info('The request key to retrieve the query limit from')->end()
+					->scalarNode('key')
+						->defaultValue('limit')
+						->info('The request key to retrieve the query limit from');
+
+			$root
+				->arrayNode('offset')->children()
+					->booleanNode('enabled')
+						->defaultTrue()
+						->info('Toggles parsing of a query offset from the request')
 						->end()
-					->end()
-					->arrayNode('offset')->children()
-						->booleanNode('enabled')
-							->defaultTrue()
-							->info('Toggles parsing of a query offset from the request')->end()
-						->scalarNode('key')
-							->defaultValue('offset')
-							->info('The request key to retrieve the query offset from')->end()
+					->scalarNode('key')
+						->defaultValue('offset')
+						->info('The request key to retrieve the query offset from');
+
+			$root
+				->arrayNode('crud')->children()
+					->booleanNode('enabled')
+						->defaultTrue()
+						->info('Toggles automatic CRUD routing for tagged entities.')
 						->end()
-					->end();
+					->arrayNode('entities')
+						->defaultValue(['%kernel.project_dir%/src/Entity'])
+						->info(
+							'An array of directories to scan for entities. Only concrete classes implementing ' .
+							EntityInterface::class . ' and tagged with the ' . AsCrudEntity::class .
+							' attribute will be processed.'
+						)
+						->end()
+					->arrayNode('prefixes')
+						->defaultValue([])
+						->info('If set, prefix all generated routes with the provided prefix map.')
+						->end()
+					->booleanNode('use_format_param')
+						->defaultTrue()
+						->info('If set, include a ".{_format}" param at the end of each generated route.');
 			// @formatter:on
 		}
 
@@ -118,6 +159,10 @@
 			ContainerBuilder $builder,
 		): void {
 			$config = new Config($config);
+
+			if ($config->getCrudConfig()->isEnabled())
+				$builder->addCompilerPass(new CrudRoutingPass($config->getCrudConfig()));
+
 			$services = $container->services();
 
 			$services

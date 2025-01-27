@@ -1,5 +1,5 @@
 <?php
-	namespace Serializer;
+	namespace DaybreakStudios\RestBundle\Tests\Serializer;
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
 	use DaybreakStudios\RestBundle\Serializer\ObjectNormalizer;
@@ -9,7 +9,7 @@
 	use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder as BaseObjectNormalizerContextBuilder;
 	use Symfony\Component\Serializer\Encoder\JsonEncoder;
 	use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-	use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+	use Symfony\Component\Serializer\Mapping\Loader as Loaders;
 	use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as BaseObjectNormalizer;
 	use Symfony\Component\Serializer\Serializer;
 
@@ -395,7 +395,14 @@
 		}
 
 		protected function setUp(): void {
-			$metadataFactory = new ClassMetadataFactory(new AnnotationLoader());
+			if (class_exists('Symfony\\Component\\Serializer\\Mapping\\Loader\\AttributeLoader'))
+				$loader = new Loaders\AttributeLoader();
+			else {
+				// Fallback for symfony/serializer < 7.0
+				$loader = new Loaders\AnnotationLoader();
+			}
+
+			$metadataFactory = new ClassMetadataFactory($loader);
 
 			$baseNormalizer = new BaseObjectNormalizer($metadataFactory);
 			$this->normalizer = new ObjectNormalizer($baseNormalizer, $metadataFactory);

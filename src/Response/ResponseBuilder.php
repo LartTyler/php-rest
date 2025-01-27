@@ -13,7 +13,7 @@
 			protected EventDispatcherInterface $eventDispatcher,
 		) {}
 
-		public function create(mixed $data, int $status = null, array $headers = [], array $context = []): Response {
+		public function create(mixed $data, ?int $status = null, array $headers = [], array $context = []): Response {
 			if ($data === null && $status === null)
 				$status = Response::HTTP_NO_CONTENT;
 
@@ -27,13 +27,13 @@
 				$status ?? Response::HTTP_OK,
 				$headers + [
 					'Content-Type' => 'application/' . $format,
-				]
+				],
 			);
 		}
 
 		public function createError(
 			ApiErrorInterface $error,
-			int $status = null,
+			?int $status = null,
 			array $headers = [],
 			array $context = [],
 		): Response {

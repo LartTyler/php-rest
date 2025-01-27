@@ -1,10 +1,10 @@
 dbstudios_rest:
     # The ID of the service to use for serialization.
     # Must implement {@see Symfony\Component\Serializer\SerializerInterface}.
-    serializer: 'app.serializer'
+    serializer: '@app.serializer'
 
     # The ID of the event dispatcher to use for this bundle's events.
-    event_dispatcher: 'event_dispatcher'
+    event_dispatcher: '@event_dispatcher'
 
     # The ID of the service to use for validation.
     # Must implement {@see Symfony\Component\Validator\Validator\ValidatorInterface}.
@@ -65,3 +65,23 @@ dbstudios_rest:
 
             # The key to retrieve the query offset from.
             key: offset
+
+    crud:
+        # Toggles automatic CRUD routing for tagged entities.
+        enabled: true
+
+        # An array of directories to recursively scan for Doctrine entities. Only concrete classes implementing
+        # EntityInterface and tagged with the AsCrudEntity attribute will be processed.
+        #
+        # Has no effect if `doctrine/orm` is not installed.
+        entities:
+            - '%kernel.project_dir%/src/Entity'
+
+        # If set, routes configured this way will include additional routing using the prefixes set below. Useful if
+        # your application needs to support multiple locales, and uses URL prefixes (e.g. "/fr/some/path") to specify
+        # which locale to use.
+        prefixes: []
+
+        # If true, all generated endpoints (except DELETE routes) will include a ".{_format}" param at the end of the
+        # route.
+        use_format_param: true
