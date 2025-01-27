@@ -129,7 +129,7 @@
 						->info('Toggles automatic CRUD routing for tagged entities.')
 						->end()
 					->arrayNode('entities')
-						->defaultValue(['%kernel.project_dir%/src/Entity'])
+						->stringPrototype()->end()
 						->info(
 							'An array of directories to scan for entities. Only concrete classes implementing ' .
 							EntityInterface::class . ' and tagged with the ' . AsCrudEntity::class .
@@ -137,7 +137,8 @@
 						)
 						->end()
 					->arrayNode('prefixes')
-						->defaultValue([])
+						->stringPrototype()->end()
+						->useAttributeAsKey('name')
 						->info('If set, prefix all generated routes with the provided prefix map.')
 						->end()
 					->booleanNode('use_format_param')
