@@ -4,37 +4,49 @@
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 
 	/**
-	 * @template T of object
-	 * @template E of EntityInterface
+	 * @template Entity of EntityInterface
+	 * @template Payload of object
 	 */
 	interface TransformerInterface {
 		/**
-		 * @param T&object $data
+		 * @psalm-param Payload $data
 		 *
-		 * @return E&EntityInterface
+		 * @param object        $data
+		 *
+		 * @return EntityInterface
+		 * @psalm-return Entity
 		 */
 		public function create(object $data): EntityInterface;
 
 		/**
-		 * @param T&object          $data
-		 * @param E&EntityInterface $entity
+		 * @psalm-param Payload   $data
+		 * @psalm-param Entity    $entity
+		 *
+		 * @param object          $data
+		 * @param EntityInterface $entity
 		 *
 		 * @return void
 		 */
 		public function update(object $data, EntityInterface $entity): void;
 
 		/**
-		 * @param E&EntityInterface $entity
+		 * @psalm-param Entity    $entity
+		 *
+		 * @param EntityInterface $entity
 		 *
 		 * @return void
 		 */
 		public function delete(EntityInterface $entity): void;
 
 		/**
-		 * @param E&EntityInterface $original
-		 * @param object|null       $data
+		 * @psalm-param Entity    $original
+		 * @psalm-param Payload   $data
 		 *
-		 * @return E&EntityInterface
+		 * @param EntityInterface $original
+		 * @param object|null     $data
+		 *
+		 * @return EntityInterface
+		 * @psalm-return Entity
 		 */
 		public function clone(EntityInterface $original, object $data = null): EntityInterface;
 	}
