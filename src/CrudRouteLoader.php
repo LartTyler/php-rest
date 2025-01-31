@@ -11,15 +11,12 @@
 		public function __construct(
 			protected array $entityDirs,
 			protected bool $useFormatParam = true,
-			protected ?array $prefixes = null,
+			protected bool $useLocalizedRoutes = false,
 		) {}
 
 		public function __invoke(): RouteCollection {
 			$collection = new RouteCollection();
 			$builder = new CollectionConfigurator($collection, '');
-
-			if ($this->prefixes)
-				$builder->prefix($this->prefixes);
 
 			foreach ($this->entityDirs as $entityDir) {
 				$locator = new EntityLocator($entityDir);
@@ -38,6 +35,9 @@
 					if ($this->useFormatParam)
 						$path .= '.{_format}';
 
+					if ($this->useLocalizedRoutes)
+						$path = '/{_locale}/' . $path;
+
 					if ($attr->isList()) {
 						$builder->add($prefix . '.list', $path)
 							->methods(['GET'])
@@ -52,16 +52,17 @@
 
 					$path = $attr->basePath . '/{entity<\d+>}';
 
-					// DELETE is added before possibly adding the _format param since it doesn't make sense to set a
-					// format on a 204 No Content response.
+					if ($this->useLocalizedRoutes)
+						$path = '/{_locale}/' . $path;
+
+					if ($this->useFormatParam)
+						$path .= '.{_format}';
+
 					if ($attr->isDelete()) {
 						$builder->add($prefix . '.delete', $path)
 							->methods(['DELETE'])
 							->controller([$controller, 'delete']);
 					}
-
-					if ($this->useFormatParam)
-						$path .= '.{_format}';
 
 					if ($attr->isRead()) {
 						$builder->add($prefix . '.read', $path)

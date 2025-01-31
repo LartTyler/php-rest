@@ -77,11 +77,8 @@ dbstudios_rest:
         entities:
             - '%kernel.project_dir%/src/Entity'
 
-        # If set, routes configured this way will include additional routing using the prefixes set below. Useful if
-        # your application needs to support multiple locales, and uses URL prefixes (e.g. "/fr/some/path") to specify
-        # which locale to use.
-        prefixes: []
-
-        # If true, all generated endpoints (except DELETE routes) will include a ".{_format}" param at the end of the
-        # route.
+        # If true, all generated endpoints will include a ".{_format}" param at the end of the path.
         use_format_param: true
+
+        # If true, all generated endpoints will include a "/{_locale}" prefix at the start of the path.
+        use_localized_routes: false

@@ -13,4 +13,8 @@
 		public function getUseFormatParam(): bool {
 			return $this->config['use_format_param'] ?? true;
 		}
+
+		public function getUseLocalizedRoutes(): bool {
+			return $this->config['use_localized_routes'] ?? false;
+		}
 	}

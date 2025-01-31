@@ -52,7 +52,7 @@
 				$container->parameters()
 					->set(Parameters::ENTITIES, $config->getCrudConfig()->getEntities())
 					->set(Parameters::USE_FORMAT_PARAM, $config->getCrudConfig()->getUseFormatParam())
-					->set(Parameters::PREFIXES, $config->getCrudConfig()->getPrefixes());
+					->set(Parameters::USE_LOCALIZED_ROUTES, $config->getCrudConfig()->getUseLocalizedRoutes());
 			}
 
 			$services = $container->services();
@@ -258,14 +258,13 @@
 							' attribute will be processed.'
 						)
 						->end()
-					->arrayNode('prefixes')
-						->scalarPrototype()->end()
-						->useAttributeAsKey('name')
-						->info('If set, prefix all generated routes with the provided prefix map.')
-						->end()
 					->booleanNode('use_format_param')
 						->defaultTrue()
-						->info('If set, include a ".{_format}" param at the end of each generated route.');
+						->info('If set, include a ".{_format}" param at the end of each generated route.')
+						->end()
+					->booleanNode('use_localized_routes')
+						->defaultFalse()
+						->info('If set, include a "/{_locale}" param at the start of each generated route.');
 			// @formatter:on
 		}
 	}

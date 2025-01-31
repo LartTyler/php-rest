@@ -28,7 +28,7 @@
 						[
 							$entities,
 							$container->getParameter(Parameters::USE_FORMAT_PARAM),
-							$container->getParameter(Parameters::PREFIXES),
+							$container->getParameter(Parameters::USE_LOCALIZED_ROUTES),
 						],
 					)
 					->addTag('routing.route_loader'),
