@@ -80,6 +80,7 @@
 					$this->transformer !== null,
 					'Provide an argument for "transformer" to use ' . $method . ' for ' . $this->entity,
 				),
+				default => null,
 			};
 
 			return true;

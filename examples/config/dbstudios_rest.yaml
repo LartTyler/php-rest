@@ -1,14 +1,14 @@
 dbstudios_rest:
     # The ID of the service to use for serialization.
     # Must implement {@see Symfony\Component\Serializer\SerializerInterface}.
-    serializer: '@app.serializer'
+    serializer: 'app.serializer'
 
     # The ID of the event dispatcher to use for this bundle's events.
-    event_dispatcher: '@event_dispatcher'
+    event_dispatcher: 'event_dispatcher'
 
     # The ID of the service to use for validation.
     # Must implement {@see Symfony\Component\Validator\Validator\ValidatorInterface}.
-    validator: '@app.validator'
+    validator: 'app.validator'
 
     # If true, uncaught exceptions that implement {@see DaybreakStudios\RestBundle\Error\AsApiErrorInterface} will be
     # intercepted and converted to a standard error response.

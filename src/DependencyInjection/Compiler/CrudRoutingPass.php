@@ -1,36 +1,40 @@
 <?php
-	namespace DaybreakStudios\RestBundle\DependencyInjection;
+	namespace DaybreakStudios\RestBundle\DependencyInjection\Compiler;
 
 	use DaybreakStudios\RestBundle\Controller\SimpleCrudController;
+	use DaybreakStudios\RestBundle\CrudRouteLoader;
 	use DaybreakStudios\RestBundle\Entity\AsCrudEntity;
 	use DaybreakStudios\RestBundle\Entity\EntityLocator;
+	use DaybreakStudios\RestBundle\Parameters;
 	use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 	use Symfony\Component\DependencyInjection\ContainerBuilder;
 	use Symfony\Component\DependencyInjection\Definition;
+	use Symfony\Component\DependencyInjection\Reference;
 
 	class CrudRoutingPass implements CompilerPassInterface {
-		public function __construct(
-			protected array $entities,
-			protected bool $useFormatParam,
-			protected array $prefixes,
-		) {}
+		public function __construct() {}
 
 		public function process(ContainerBuilder $container): void {
+			if (!$container->hasParameter(Parameters::ENTITIES))
+				return;
+
 			$container->addObjectResource(SimpleCrudController::class);
 
+			$entities = $container->getParameter(Parameters::ENTITIES);
 			$container->setDefinition(
 				'dbstudios_rest.crud.route_loader',
 				(new Definition(CrudRouteLoader::class))
 					->setArguments(
 						[
-							$this->entities,
-							$this->useFormatParam,
-							$this->prefixes,
+							$entities,
+							$container->getParameter(Parameters::USE_FORMAT_PARAM),
+							$container->getParameter(Parameters::PREFIXES),
 						],
-					),
+					)
+					->addTag('routing.route_loader'),
 			);
 
-			foreach ($this->entities as $path) {
+			foreach ($entities as $path) {
 				$locator = new EntityLocator($path);
 
 				foreach ($locator as $class) {
@@ -42,12 +46,12 @@
 					$def = (new Definition(SimpleCrudController::class))
 						->setBindings(
 							[
-								'entity' => $class,
-								'dtoClass' => $attr->dtoClass,
-								'firewallRole' => $attr->firewallRoles,
-								'allowedCrudMethods' => $attr->methods,
-								'transformer' => $attr->transformer,
-								'strict' => $attr->strict,
+								'$entity' => $class,
+								'$dtoClass' => $attr->dtoClass,
+								'$firewallRole' => $attr->firewallRoles,
+								'$allowedCrudMethods' => $attr->methods,
+								'$transformer' => $attr->transformer ? new Reference($attr->transformer) : null,
+								'$strict' => $attr->strict,
 							],
 						)
 						->addTag('controller.service_arguments')

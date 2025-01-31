@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\RestBundle\DependencyInjection;
+	namespace DaybreakStudios\RestBundle;
 
 	use DaybreakStudios\RestBundle\Entity\AsCrudEntity;
 	use DaybreakStudios\RestBundle\Entity\EntityLocator;
