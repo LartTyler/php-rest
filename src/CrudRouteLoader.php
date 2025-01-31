@@ -71,7 +71,7 @@
 					}
 
 					if ($attr->isUpdate()) {
-						$builder->add($prefix . ' .update', $path)
+						$builder->add($prefix . '.update', $path)
 							->methods(['PATCH'])
 							->controller([$controller, 'update']);
 					}
