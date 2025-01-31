@@ -36,7 +36,7 @@
 						$path .= '.{_format}';
 
 					if ($this->useLocalizedRoutes)
-						$path = '/{_locale}/' . $path;
+						$path = '/{_locale}' . $path;
 
 					if ($attr->isList()) {
 						$builder->add($prefix . '.list', $path)
@@ -53,7 +53,7 @@
 					$path = $attr->basePath . '/{entity<\d+>}';
 
 					if ($this->useLocalizedRoutes)
-						$path = '/{_locale}/' . $path;
+						$path = '/{_locale}' . $path;
 
 					if ($this->useFormatParam)
 						$path .= '.{_format}';
