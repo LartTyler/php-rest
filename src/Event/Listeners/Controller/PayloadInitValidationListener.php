@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
-	use DaybreakStudios\Rest\Event\Events\Controller\PayloadInitEvent;
-	use DaybreakStudios\Rest\Transformer\Errors\ConstraintViolationError;
+	use DaybreakStudios\RestBundle\Event\Events\Controller\PayloadInitEvent;
+	use DaybreakStudios\RestBundle\Transformer\Errors\ConstraintViolationError;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\Validator\Constraint;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;

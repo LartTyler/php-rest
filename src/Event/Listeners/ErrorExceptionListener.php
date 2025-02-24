@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners;
+	namespace DaybreakStudios\RestBundle\Event\Listeners;
 
-	use DaybreakStudios\Rest\Error\AsApiErrorInterface;
-	use DaybreakStudios\Rest\Response\ResponseBuilderInterface;
+	use DaybreakStudios\RestBundle\Error\AsApiErrorInterface;
+	use DaybreakStudios\RestBundle\Response\ResponseBuilderInterface;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 

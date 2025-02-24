@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Events;
+	namespace DaybreakStudios\RestBundle\Event\Events;
 
 	use Symfony\Contracts\EventDispatcher\Event;
 

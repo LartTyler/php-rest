@@ -1,10 +1,10 @@
 <?php
-	namespace DaybreakStudios\Rest\Event\Listeners\Controller;
+	namespace DaybreakStudios\RestBundle\Event\Listeners\Controller;
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\Projection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\ProjectionInterface;
-	use DaybreakStudios\Rest\Error\Errors\QueryDocument\ProjectionSyntaxError;
-	use DaybreakStudios\Rest\Event\Events\Controller\ProjectionInitEvent;
+	use DaybreakStudios\RestBundle\Error\Errors\QueryDocument\ProjectionSyntaxError;
+	use DaybreakStudios\RestBundle\Event\Events\Controller\ProjectionInitEvent;
 	use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\RequestStack;

@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Serializer;
+	namespace DaybreakStudios\RestBundle\Serializer;
 
 	use DaybreakStudios\DoctrineQueryDocument\Projection\PrefixedProjection;
 	use DaybreakStudios\DoctrineQueryDocument\Projection\ProjectionInterface;

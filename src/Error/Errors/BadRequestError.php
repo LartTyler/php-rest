@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Error\Errors;
+	namespace DaybreakStudios\RestBundle\Error\Errors;
 
-	use DaybreakStudios\Rest\Error\ApiError;
+	use DaybreakStudios\RestBundle\Error\ApiError;
 	use Symfony\Component\HttpFoundation\Response;
 
 	class BadRequestError extends ApiError {

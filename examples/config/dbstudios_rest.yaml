@@ -1,0 +1,84 @@
+dbstudios_rest:
+    # The ID of the service to use for serialization.
+    # Must implement {@see Symfony\Component\Serializer\SerializerInterface}.
+    serializer: 'app.serializer'
+
+    # The ID of the event dispatcher to use for this bundle's events.
+    event_dispatcher: 'event_dispatcher'
+
+    # The ID of the service to use for validation.
+    # Must implement {@see Symfony\Component\Validator\Validator\ValidatorInterface}.
+    validator: 'app.validator'
+
+    # If true, uncaught exceptions that implement {@see DaybreakStudios\RestBundle\Error\AsApiErrorInterface} will be
+    # intercepted and converted to a standard error response.
+    wrap_error_exceptions: true
+
+    # The format to use if one cannot be determined for a request or response.
+    fallback_format: json
+
+    payload:
+        # If true, the standard {@see DaybreakStudios\RestBundle\Event\Listeners\Controller\PayloadInitListener} will be
+        # registered to handle parsing request payloads. If you disable this, you will need to provide your own
+        # listener(s) for the `PayloadInitEvent`.
+        enabled: true
+
+        # If true, the standard {@see DaybreakStudios\RestBundle\Event\Listeners\PayloadInitValidationListener} will be
+        # registered to validate all incoming request payloads. Disabling this will turn off all payload validation
+        # unless you provide your own listener(s) for the `PayloadInitValidationEvent`.
+        #
+        # Has no effect if `dbstudios_rest.validator` is not set.
+        validate: true
+
+    request:
+        projection:
+            # Toggles projection parsing from the request. If disabled, projections will not be automatically applied to
+            # responses.
+            enabled: true
+
+            # The key to parse the request projection from.
+            key: p
+
+            # The key to retrieve the default match behavior setting from, if it is set in the projection.
+            defaultMatchBehaviorKey: _default
+
+        query:
+            # Toggles query parsing from the request. If disabled, queries will not be automatically applied to
+            # relevant queries during the request.
+            enabled: true
+
+            # The key to retrieve the query object from.
+            key: q
+
+        limit:
+            # Toggles the limit option on requests. If disabled, query limits for list endpoints will not be
+            # automatically set. If you disable this option, it is recommended that you also disable the limit option.
+            enabled: true
+
+            # The key to retrieve the query limit from.
+            key: limit
+
+        offset:
+            # Toggles the offset option on requests. If disabled, query offsets for list endpoints will not be
+            # automatically set. If you disable this option, it is recommended that you also disable the limit option.
+            enabled: true
+
+            # The key to retrieve the query offset from.
+            key: offset
+
+    crud:
+        # Toggles automatic CRUD routing for tagged entities.
+        enabled: true
+
+        # An array of directories to recursively scan for Doctrine entities. Only concrete classes implementing
+        # EntityInterface and tagged with the AsCrudEntity attribute will be processed.
+        #
+        # Has no effect if `doctrine/orm` is not installed.
+        entities:
+            - '%kernel.project_dir%/src/Entity'
+
+        # If true, all generated endpoints will include a ".{_format}" param at the end of the path.
+        use_format_param: true
+
+        # If true, all generated endpoints will include a "/{_locale}" prefix at the start of the path.
+        use_localized_routes: false

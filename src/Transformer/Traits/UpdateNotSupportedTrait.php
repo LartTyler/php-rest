@@ -1,8 +1,8 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer\Traits;
+	namespace DaybreakStudios\RestBundle\Transformer\Traits;
 
-	use DaybreakStudios\Rest\Transformer\Exceptions\ActionNotSupportedException;
-	use DaybreakStudios\Rest\Transformer\TransformerInterface;
+	use DaybreakStudios\RestBundle\Transformer\Exceptions\ActionNotSupportedException;
+	use DaybreakStudios\RestBundle\Transformer\TransformerInterface;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 
 	/**

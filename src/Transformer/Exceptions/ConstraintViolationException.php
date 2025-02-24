@@ -1,9 +1,9 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer\Exceptions;
+	namespace DaybreakStudios\RestBundle\Transformer\Exceptions;
 
-	use DaybreakStudios\Rest\Error\ApiErrorInterface;
-	use DaybreakStudios\Rest\Error\AsApiErrorInterface;
-	use DaybreakStudios\Rest\Transformer\Errors\ConstraintViolationError;
+	use DaybreakStudios\RestBundle\Error\ApiErrorInterface;
+	use DaybreakStudios\RestBundle\Error\AsApiErrorInterface;
+	use DaybreakStudios\RestBundle\Transformer\Errors\ConstraintViolationError;
 	use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 	class ConstraintViolationException extends \RuntimeException implements AsApiErrorInterface {

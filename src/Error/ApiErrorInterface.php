@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Error;
+	namespace DaybreakStudios\RestBundle\Error;
 
 	interface ApiErrorInterface {
 		public function getCode(): string;

@@ -1,5 +1,5 @@
 <?php
-	namespace DaybreakStudios\Rest\Response;
+	namespace DaybreakStudios\RestBundle\Response;
 
 	use Symfony\Component\Serializer\Context\ContextBuilderInterface;
 	use Symfony\Component\Serializer\Context\ContextBuilderTrait;

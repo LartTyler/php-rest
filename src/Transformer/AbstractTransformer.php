@@ -1,11 +1,17 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer;
+	namespace DaybreakStudios\RestBundle\Transformer;
 
-	use DaybreakStudios\Rest\Transformer\Exceptions\ConstraintViolationException;
+	use DaybreakStudios\RestBundle\Transformer\Exceptions\ConstraintViolationException;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Doctrine\ORM\EntityManagerInterface;
 	use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+	/**
+	 * @template Entity of EntityInterface
+	 * @template Payload of object
+	 *
+	 * @extends TransformerInterface<Entity, Payload>
+	 */
 	abstract class AbstractTransformer implements TransformerInterface {
 		public function __construct(
 			protected EntityManagerInterface $entityManager,
@@ -45,14 +51,55 @@
 			return $cloned;
 		}
 
+		/**
+		 * @psalm-param Payload $data
+		 *
+		 * @param object        $data
+		 *
+		 * @return EntityInterface
+		 * @psalm-return Entity
+		 */
 		protected abstract function doCreate(object $data): EntityInterface;
 
+		/**
+		 * @psalm-param Payload   $data
+		 * @psalm-param Entity    $entity
+		 *
+		 * @param object          $data
+		 * @param EntityInterface $entity
+		 *
+		 * @return void
+		 */
 		protected abstract function doUpdate(object $data, EntityInterface $entity): void;
 
+		/**
+		 * @psalm-param Entity    $entity
+		 *
+		 * @param EntityInterface $entity
+		 *
+		 * @return void
+		 */
 		protected abstract function doDelete(EntityInterface $entity): void;
 
+		/**
+		 * @psalm-param Entity    $original
+		 * @psalm-param Payload   $data
+		 *
+		 * @param EntityInterface $original
+		 * @param object|null     $data
+		 *
+		 * @return EntityInterface
+		 * @psalm-return Entity
+		 */
 		protected abstract function doClone(EntityInterface $original, object $data = null): EntityInterface;
 
+		/**
+		 * @psalm-param Entity    $entity
+		 *
+		 * @param EntityInterface $entity
+		 *
+		 * @return void
+		 */
 		protected function validate(EntityInterface $entity): void {
 			if (!$this->validator)
 				return;

@@ -1,10 +1,10 @@
 <?php
 
-	use DaybreakStudios\Rest\Controller\AbstractApiController;
-	use DaybreakStudios\Rest\Payload\Intent;
-	use DaybreakStudios\Rest\Payload\PayloadTrait;
-	use DaybreakStudios\Rest\Transformer\AbstractTransformer;
-	use DaybreakStudios\Rest\Transformer\Traits\CloneNotSupportedTrait;
+	use DaybreakStudios\RestBundle\Controller\AbstractApiController;
+	use DaybreakStudios\RestBundle\Payload\Intent;
+	use DaybreakStudios\RestBundle\Payload\PayloadTrait;
+	use DaybreakStudios\RestBundle\Transformer\AbstractTransformer;
+	use DaybreakStudios\RestBundle\Transformer\Traits\CloneNotSupportedTrait;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 	use Symfony\Component\HttpFoundation\Response;
 	use Symfony\Component\Validator\Constraints as Assert;

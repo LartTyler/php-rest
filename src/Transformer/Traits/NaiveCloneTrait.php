@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Transformer\Traits;
+	namespace DaybreakStudios\RestBundle\Transformer\Traits;
 
-	use DaybreakStudios\Rest\Transformer\AbstractTransformer;
+	use DaybreakStudios\RestBundle\Transformer\AbstractTransformer;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 
 	/**

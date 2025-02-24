@@ -1,7 +1,7 @@
 <?php
-	namespace DaybreakStudios\Rest\Error\Errors\QueryDocument;
+	namespace DaybreakStudios\RestBundle\Error\Errors\QueryDocument;
 
-	use DaybreakStudios\Rest\Error\ApiError;
+	use DaybreakStudios\RestBundle\Error\ApiError;
 	use Symfony\Component\HttpFoundation\Response;
 
 	class QuerySyntaxError extends ApiError {
