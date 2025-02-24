@@ -3,6 +3,7 @@
 
 	use DaybreakStudios\RestBundle\Controller\SimpleCrudController;
 	use DaybreakStudios\RestBundle\CrudRouteLoader;
+	use DaybreakStudios\RestBundle\DaybreakStudiosRestBundle;
 	use DaybreakStudios\RestBundle\Entity\AsCrudEntity;
 	use DaybreakStudios\RestBundle\Entity\EntityLocator;
 	use DaybreakStudios\RestBundle\Parameters;
@@ -22,7 +23,7 @@
 
 			$entities = $container->getParameter(Parameters::ENTITIES);
 			$container->setDefinition(
-				'dbstudios_rest.crud.route_loader',
+				DaybreakStudiosRestBundle::PREFIX . 'crud.route_loader',
 				(new Definition(CrudRouteLoader::class))
 					->setArguments(
 						[

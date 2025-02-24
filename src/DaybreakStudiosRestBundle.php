@@ -29,6 +29,8 @@
 	use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 	class DaybreakStudiosRestBundle extends AbstractBundle {
+		public const PREFIX = 'daybreak_studios_rest.';
+
 		public function build(ContainerBuilder $container): void {
 			parent::build($container);
 			$container->addCompilerPass(new CrudRoutingPass());
@@ -58,22 +60,22 @@
 			$services = $container->services();
 
 			$services
-				->set('dbstudios_rest.response_builder', ResponseBuilder::class)
+				->set(self::PREFIX . 'response_builder', ResponseBuilder::class)
 				->args([service($config->getSerializerId()), service($config->getEventDispatcherId())])
-				->alias(ResponseBuilderInterface::class, 'dbstudios_rest.response_builder');
+				->alias(ResponseBuilderInterface::class, self::PREFIX . 'response_builder');
 
 			$services
-				->set('dbstudios_rest.query_manager', QueryManager::class)
+				->set(self::PREFIX . 'query_manager', QueryManager::class)
 				->args([service($config->getEntityManagerId())])
-				->alias(QueryManagerInterface::class, 'dbstudios_rest.query_manager');
+				->alias(QueryManagerInterface::class, self::PREFIX . 'query_manager');
 
 			$services
-				->set('dbstudios_rest.format_provider', DefaultRequestFormatProvider::class)
+				->set(self::PREFIX . 'format_provider', DefaultRequestFormatProvider::class)
 				->args([service('request_stack'), $config->getFallbackFormat()])
 				->tag('kernel.event_listener');
 
 			$services
-				->set('dbstudios_rest.serializer.normalizer.object', ObjectNormalizer::class)
+				->set(self::PREFIX . 'serializer.normalizer.object', ObjectNormalizer::class)
 				->args(
 					[
 						service('serializer.normalizer.object'),
@@ -86,19 +88,19 @@
 				->tag('serializer.normalizer');
 
 			$services
-				->set('dbstudios_rest.serializer.denormalizer.entity', EntityDenormalizer::class)
+				->set(self::PREFIX . 'serializer.denormalizer.entity', EntityDenormalizer::class)
 				->args([service($config->getEntityManagerId())]);
 
 			if ($config->getShouldWrapErrorExceptions()) {
 				$services
-					->set('dbstudios.error_exception_handler', ErrorExceptionListener::class)
-					->args([service('dbstudios_rest.response_builder')])
+					->set(self::PREFIX . 'error_exception_handler', ErrorExceptionListener::class)
+					->args([service(self::PREFIX . 'response_builder')])
 					->tag('kernel.event_listener');
 			}
 
 			if ($config->getPayloadConfig()->isEnabled()) {
 				$services
-					->set('dbstudios_rest.payload.init_listener', PayloadInitListener::class)
+					->set(self::PREFIX . 'payload.init_listener', PayloadInitListener::class)
 					->args(
 						[
 							service($config->getSerializerId()),
@@ -110,7 +112,7 @@
 
 				if ($config->getPayloadConfig()->isValidationEnabled() && $validatorId = $config->getValidatorId()) {
 					$services
-						->set('dbstudios_rest.payload.validation_listener', PayloadInitValidationListener::class)
+						->set(self::PREFIX . 'payload.validation_listener', PayloadInitValidationListener::class)
 						->args([service($validatorId)])
 						->tag('kernel.event_listener');
 				}
@@ -122,7 +124,7 @@
 		protected function initRequestServices(RequestConfig $config, ServicesConfigurator $services): void {
 			if (($projection = $config->getProjectionConfig())->isEnabled()) {
 				$services
-					->set('dbstudios_rest.request.projection_listener', ProjectionInitListener::class)
+					->set(self::PREFIX . 'request.projection_listener', ProjectionInitListener::class)
 					->args(
 						[service('request_stack'), $projection->getKey(), $projection->getDefaultMatchBehaviorKey()],
 					)
@@ -131,21 +133,21 @@
 
 			if ($config->getQueryConfig()->isEnabled()) {
 				$services
-					->set('dbstudios_rest.request.query_listener', QueryInitListener::class)
+					->set(self::PREFIX . 'request.query_listener', QueryInitListener::class)
 					->args([service('request_stack'), $config->getQueryConfig()->getKey()])
 					->tag('kernel.event_listener');
 			}
 
 			if ($config->getLimitConfig()->isEnabled()) {
 				$services
-					->set('dbstudios_rest.request.limit_listener', QueryLimitInitListener::class)
+					->set(self::PREFIX . 'request.limit_listener', QueryLimitInitListener::class)
 					->args([service('request_stack'), $config->getLimitConfig()->getKey()])
 					->tag('kernel.event_listener');
 			}
 
 			if ($config->getOffsetConfig()->isEnabled()) {
 				$services
-					->set('dbstudios_rest.request.offset_listener', QueryOffsetInitListener::class)
+					->set(self::PREFIX . 'request.offset_listener', QueryOffsetInitListener::class)
 					->args([service('request_stack'), $config->getOffsetConfig()->getKey()])
 					->tag('kernel.event_listener');
 			}
@@ -212,42 +214,42 @@
 							->end()
 						->scalarNode('defaultMatchBehaviorKey')
 							->defaultValue('_default')
-							->info('The projection key to retrieve the default match behavior from (if set)');
-
-			$root
-				->arrayNode('query')->children()
-					->booleanNode('enabled')
-						->defaultTrue()
-						->info('Toggles parsing of a query object from the request')
+							->info('The projection key to retrieve the default match behavior from (if set)')
+							->end()
 						->end()
-					->scalarNode('key')
-						->defaultValue('q')
-						->info('The request key to retrieve the query object from');
-
-			$root
-				->arrayNode('limit')->children()
-					->booleanNode('enabled')
-						->defaultTrue()
-						->info('Toggles parsing of a query limit from the request')
+					->arrayNode('query')->children()
+						->booleanNode('enabled')
+							->defaultTrue()
+							->info('Toggles parsing of a query object from the request')
+							->end()
+						->scalarNode('key')
+							->defaultValue('q')
+							->info('The request key to retrieve the query object from')
+							->end()
 						->end()
-					->scalarNode('key')
-						->defaultValue('limit')
-						->info('The request key to retrieve the query limit from');
-
-			$root
-				->arrayNode('offset')->children()
-					->booleanNode('enabled')
-						->defaultTrue()
-						->info('Toggles parsing of a query offset from the request')
+					->arrayNode('limit')->children()
+						->booleanNode('enabled')
+							->defaultTrue()
+							->info('Toggles parsing of a query limit from the request')
+							->end()
+						->scalarNode('key')
+							->defaultValue('limit')
+							->info('The request key to retrieve the query limit from')
+							->end()
 						->end()
-					->scalarNode('key')
-						->defaultValue('offset')
-						->info('The request key to retrieve the query offset from');
+					->arrayNode('offset')->children()
+						->booleanNode('enabled')
+							->defaultTrue()
+							->info('Toggles parsing of a query offset from the request')
+							->end()
+						->scalarNode('key')
+							->defaultValue('offset')
+							->info('The request key to retrieve the query offset from');
 
 			$root
 				->arrayNode('crud')->children()
 					->booleanNode('enabled')
-						->defaultTrue()
+						->defaultFalse()
 						->info('Toggles automatic CRUD routing for tagged entities.')
 						->end()
 					->arrayNode('entities')

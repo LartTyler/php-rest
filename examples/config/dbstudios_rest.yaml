@@ -1,4 +1,4 @@
-dbstudios_rest:
+daybreak_studios_rest:
     # The ID of the service to use for serialization.
     # Must implement {@see Symfony\Component\Serializer\SerializerInterface}.
     serializer: 'app.serializer'
@@ -68,7 +68,7 @@ dbstudios_rest:
 
     crud:
         # Toggles automatic CRUD routing for tagged entities.
-        enabled: true
+        enabled: false
 
         # An array of directories to recursively scan for Doctrine entities. Only concrete classes implementing
         # EntityInterface and tagged with the AsCrudEntity attribute will be processed.

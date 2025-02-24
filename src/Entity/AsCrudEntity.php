@@ -1,6 +1,7 @@
 <?php
 	namespace DaybreakStudios\RestBundle\Entity;
 
+	use DaybreakStudios\RestBundle\DaybreakStudiosRestBundle;
 	use DaybreakStudios\Utility\DoctrineEntities\EntityInterface;
 
 	#[\Attribute(\Attribute::TARGET_CLASS)]
@@ -104,6 +105,6 @@
 		}
 
 		public static function getEntityControllerName(string $class): string {
-			return 'dbstudios_rest.generated.crud.' . static::getEntityPrefix($class);
+			return DaybreakStudiosRestBundle::PREFIX . 'generated.crud.' . static::getEntityPrefix($class);
 		}
 	}

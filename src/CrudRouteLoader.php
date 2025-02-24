@@ -27,7 +27,8 @@
 					if (!$attr)
 						continue;
 
-					$prefix = 'dbstudios_rest.crud.generated.' . AsCrudEntity::getEntityPrefix($class);
+					$prefix = DaybreakStudiosRestBundle::PREFIX . 'crud.generated.' .
+						AsCrudEntity::getEntityPrefix($class);
 					$controller = AsCrudEntity::getEntityControllerName($class);
 
 					$path = $attr->basePath;

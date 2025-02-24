@@ -2,7 +2,7 @@
 	namespace DaybreakStudios\RestBundle;
 
 	final class Parameters {
-		protected const PREFIX = 'dbstudios_rest.crud.';
+		protected const PREFIX = DaybreakStudiosRestBundle::PREFIX . 'crud.';
 
 		public const ENTITIES = self::PREFIX . 'entities';
 		public const USE_FORMAT_PARAM = self::PREFIX . 'use_format_param';
