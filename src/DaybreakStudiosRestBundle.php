@@ -83,6 +83,8 @@
 						service('serializer.name_converter.metadata_aware'),
 						service('property_info')->ignoreOnInvalid(),
 						service('serializer.mapping.class_discriminator_resolver')->ignoreOnInvalid(),
+						null,
+						[],
 					],
 				)
 				->tag('serializer.normalizer');
